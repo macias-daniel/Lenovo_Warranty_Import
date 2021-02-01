@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><database>
     <element label="Lenovo Warranty Import Logs" max_length="40" name="x_500374_leno_warr_logs" type="collection">
-        <element attributes="edge_encryption_enabled=true" label="Message" max_length="255" name="message" type="string"/>
+        <element attributes="edge_encryption_enabled=true,no_truncate=true" label="Message" max_length="255" name="message" type="string"/>
         <element attributes="edge_encryption_enabled=true" label="Status" max_length="255" name="status" type="string"/>
     </element>
 </database>

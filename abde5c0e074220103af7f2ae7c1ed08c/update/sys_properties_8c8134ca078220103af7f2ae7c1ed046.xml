@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_properties">
+    <sys_properties action="INSERT_OR_UPDATE">
+        <choices/>
+        <description>This defines the age of logs in Dell Warranty Imports Log Table before they are deleted (removed by the function truncate_logs in App_Utils)</description>
+        <ignore_cache>false</ignore_cache>
+        <is_private>false</is_private>
+        <name>x_500374_leno_warr.truncate_logs_value</name>
+        <read_roles/>
+        <suffix>truncate_logs_value</suffix>
+        <sys_class_name>sys_properties</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2021-02-01 22:10:46</sys_created_on>
+        <sys_id>8c8134ca078220103af7f2ae7c1ed046</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x_500374_leno_warr.truncate_logs_value</sys_name>
+        <sys_package display_value="Lenovo Warranty Import" source="x_500374_leno_warr">abde5c0e074220103af7f2ae7c1ed08c</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Lenovo Warranty Import">abde5c0e074220103af7f2ae7c1ed08c</sys_scope>
+        <sys_update_name>sys_properties_8c8134ca078220103af7f2ae7c1ed046</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2021-02-01 22:10:46</sys_updated_on>
+        <type>integer</type>
+        <value>15</value>
+        <write_roles/>
+    </sys_properties>
+    <sys_translated_text action="delete_multiple" query="documentkey=8c8134ca078220103af7f2ae7c1ed046"/>
+</record_update>

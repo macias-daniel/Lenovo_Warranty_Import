@@ -57,7 +57,7 @@
         <interval>year</interval>
         <is_published>false</is_published>
         <is_real_time>false</is_real_time>
-        <is_scheduled>false</is_scheduled>
+        <is_scheduled>true</is_scheduled>
         <legend_align_columns>true</legend_align_columns>
         <legend_background_color/>
         <legend_border_color/>
@@ -106,14 +106,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2021-02-01 21:33:54</sys_created_on>
         <sys_id>6c296c06078220103af7f2ae7c1ed0e3</sys_id>
-        <sys_mod_count>1</sys_mod_count>
+        <sys_mod_count>2</sys_mod_count>
         <sys_name>All Expiring Contracts (90 Days)</sys_name>
         <sys_package display_value="Lenovo Warranty Import" source="x_500374_leno_warr">abde5c0e074220103af7f2ae7c1ed08c</sys_package>
         <sys_policy/>
         <sys_scope display_value="Lenovo Warranty Import">abde5c0e074220103af7f2ae7c1ed08c</sys_scope>
         <sys_update_name>sys_report_6c296c06078220103af7f2ae7c1ed0e3</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2021-02-01 21:34:00</sys_updated_on>
+        <sys_updated_on>2021-02-01 22:03:53</sys_updated_on>
         <table>ast_contract</table>
         <title>All Expiring Contracts (90 Days)</title>
         <title_horizontal_alignment>center</title_horizontal_alignment>
