@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>x_500374_leno_warr.Lenovo_Contract_Utils</api_name>
+        <caller_access/>
+        <client_callable>true</client_callable>
+        <description>Scipt include to manage contract retrievals</description>
+        <name>Lenovo_Contract_Utils</name>
+        <script><![CDATA[var Lenovo_Contract_Utils = Class.create();
+Lenovo_Contract_Utils.prototype = Object.extendsObject(global.AbstractAjaxProcessor, {
+
+	// MAIN LOGIC - Get a hardware assets serial number, get its warranty contract and attach it to the asset
+    get_contract: function(asset_serial_num) { 
+
+        ////////////////////////////////////////// Variables ////////////////////////////////////////////
+        // Script include references
+        var app_utils = new Lenovo_App_Utils;
+        var api_utils = new Lenovo_API_Utils;
+        var contract_processing_utils = new Lenovo_Contract_Processing_Utils;
+
+        // Table references
+        var asset_gr = new GlideRecord('alm_hardware');
+
+        // Asset data
+        var serial_num = (asset_serial_num || this.getParameter('sysparm_serial_number')); // The value populated is determined by where get_contract was called from
+        var asset_sys_id;
+
+        // API Data
+        var api_key;
+
+        // Retrieved Contract Data
+        var raw_json;
+        var scrubbed_json;
+        var created_contract;
+
+		// Contract retrieval count
+		var success = false;
+		var error = true;
+
+        //////////////////////////////////////////// Value Checking/Setting //////////////////////////////////////////
+
+        app_utils.function_log('Lenovo_Contract_Utils', 'get_contract'); // See Lenovo_App_Utils
+
+        if (serial_num == '') { // Check that the asset doesnt have a blank serial number
+            app_utils.create_log('Hardware asset does not have a Serial number, please add a Serial number and then try the "Get Contract" action again.', 'Error');
+            gs.addErrorMessage('Harware asset does not have a Serial number, please add a Serial number and then try the "Get Contract" action again.');
+            return;
+        }
+
+        asset_gr.addEncodedQuery('serial_number=' + serial_num);
+        asset_gr.query();
+        if (asset_gr.next()) {
+            asset_sys_id = asset_gr.sys_id; // Get and store assets sys_id
+            if (asset_gr.model.manufacturer.name.indexOf('Lenovo') < 0) {
+                app_utils.create_log('Lenovo is not set as the manufacturer of this hardware asset, please add Lenovo as the Manufacturer and then try the "Get Contract" action again.', 'Error');
+                gs.addErrorMessage('Lenovo is not set as the manufacturer of this hardware asset, please add Lenovo as the Manufacturer and then try the "Get Contract" action again.');
+                return;
+            }
+        }
+
+		api_key = app_utils.get_api_key(); // Retrieve api key 
+		if(!api_key){ // If api credentials were not retrieved
+			return;
+		}
+
+        ////////////////////////////////////////// Main Life Cycle //////////////////////////////////////////
+
+        raw_json = api_utils.get_contract_json(serial_num, api_key); // Get asset's contract and store in raw_json variable
+
+		if(raw_json.status_code == 200){   // If no errors occured proccess the contract
+            scrubbed_json = contract_processing_utils.scrub_contract_json(raw_json.contract_json);
+            created_contract = contract_processing_utils.create_contract(scrubbed_json, asset_sys_id);
+            contract_processing_utils.assign_contract_to_asset(created_contract, asset_sys_id);
+
+			// Settings the variables that will be returned to the client
+            success = true;
+			error = false;
+
+            app_utils.create_log('Contract for asset with serial number: ' + serial_num + ' from Lenovo has completed processing.');
+        } else { // If an error occured when retrieving code
+			app_utils.create_log('Lenovo API Error Message: ' + raw_json.contract_json, 'Error'); // Log server error
+            app_utils.create_log('Could not retrieve contract(s) for asset with serial number: ' + serial_num + ' from Lenovo.', 'Error');
+            gs.addErrorMessage('Could not retrieve contract(s) for asset with serial number: ' + serial_num + ' from Lenovo.');
+		}
+		
+        return JSON.stringify({success: success, error: error}); // Send success and error back to client for processing
+		
+    },
+
+	//Get ALL VALID hardware assets serial numbers, get their warranty contract and attach it to the asset
+    get_all_contracts: function() {
+
+        // Script includes
+        var app_utils = new Lenovo_App_Utils;
+        var api_utils = new Lenovo_API_Utils;
+        var contract_processing_utils = new Lenovo_Contract_Processing_Utils;
+
+        // Table references
+        var asset_gr = new GlideRecord('alm_hardware');
+
+		// Asset data
+		var serial_num;
+		var asset_sys_id;
+		
+		// API Data
+        var api_key;
+		
+		// Various contract states
+		var raw_json;
+		var scrubbed_json;
+		var created_contract;
+		
+		// Contract retrieval count
+		var successes = 0;
+		var errors = 0;
+		
+		// Encoded Queries
+		var encoded_asset_query;
+		
+		//////////////////////////////////////////// Value Checking/Setting //////////////////////////////////////////
+		app_utils.create_log('Get all contracts is now executing');
+		
+		encoded_asset_query = 'serial_numberISNOTEMPTY^model_category.name=Computer^model.manufacturer.nameLIKElenovo';
+
+		api_key = app_utils.get_api_key(); // Retrieve api key 
+		if(!api_key){ // If api credentials were not retrieved
+			return;
+		}
+        asset_gr.addEncodedQuery(encoded_asset_query);
+        asset_gr.query(); // Query for valid hardware assets 
+		
+        //////////////////////////////////////////// Main Life Cycle //////////////////////////////////////////
+        while (asset_gr.next()) { // Loop through every hardware asset individually
+			
+			serial_num = asset_gr.serial_number;
+			asset_sys_id = asset_gr.getUniqueValue();
+			
+            raw_json = api_utils.get_contract_json(serial_num, api_key); // Get asset's contract and store in raw_json variable
+			
+			if(raw_json.status_code == 200){   // If no errors occured proccess the contract
+				scrubbed_json = contract_processing_utils.scrub_contract_json(raw_json.contract_json);
+				created_contract = contract_processing_utils.create_contract(scrubbed_json, asset_sys_id);
+				contract_processing_utils.assign_contract_to_asset(created_contract, asset_sys_id);
+
+                app_utils.create_log('Contract for asset with serial number: ' + serial_num + ' from Lenovo has completed processing.');
+				
+				successes ++;
+            } else { // If an error occured when retrieving code
+				app_utils.create_log('Lenovo API Error Message: ' + raw_json.contract_json, 'Error'); // Log server error
+				app_utils.create_log('Could not retrieve contract(s) for asset with serial number: ' + serial_num + ' from Lenovo.', 'Error');
+				gs.addErrorMessage('Could not retrieve contract(s) for asset with serial number: ' + serial_num + ' from Lenovo.');
+
+				errors++;
+			}
+		}
+		app_utils.create_log('Succeeded in retrieving ' + successes + ' contracts. Errors occured when trying to retrieve ' + errors + ' contracts.');
+		
+    },
+
+    type: 'Lenovo_Contract_Utils'
+});]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2021-02-01 21:59:07</sys_created_on>
+        <sys_id>989e6c0a078220103af7f2ae7c1ed063</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Lenovo_Contract_Utils</sys_name>
+        <sys_package display_value="Lenovo Warranty Import" source="x_500374_leno_warr">abde5c0e074220103af7f2ae7c1ed08c</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Lenovo Warranty Import">abde5c0e074220103af7f2ae7c1ed08c</sys_scope>
+        <sys_update_name>sys_script_include_989e6c0a078220103af7f2ae7c1ed063</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2021-02-01 21:59:07</sys_updated_on>
+    </sys_script_include>
+</record_update>

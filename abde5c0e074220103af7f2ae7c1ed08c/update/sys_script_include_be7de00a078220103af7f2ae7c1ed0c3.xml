@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>x_500374_leno_warr.Lenovo_API_Utils</api_name>
+        <caller_access/>
+        <client_callable>true</client_callable>
+        <description>Reusable API Calss</description>
+        <name>Lenovo_API_Utils</name>
+        <script><![CDATA[var Lenovo_API_Utils = Class.create();
+Lenovo_API_Utils.prototype = Object.extendsObject(global.AbstractAjaxProcessor, {
+
+	// Make a get request to lenovo warranty api endpoint and return its response to the client
+    get_contract_json: function(serial_num, api_key) {
+
+		////////////////////////////////////////// Variables ////////////////////////////////////////////
+        var app_utils = new Lenovo_App_Utils;
+        var rest_v2 = new sn_ws.RESTMessageV2();
+        var api_end_point = gs.getProperty('x_500374_leno_warr.warranty_api_endpoint');
+		
+        var response;
+        var response_body;
+		var status_code;
+
+		var cleaned_up_serial_num = serial_num.split('-').join(''); // removing hypens from serial numbers because lenovo doesnt like them
+		
+		app_utils.function_log('Lenovo_API_Utils', 'get_contract_json');
+		
+		app_utils.create_log('Lenovo Warranty Import has begun processing on Lenovo asset ' + serial_num);
+		
+		////////////////////////////////////////// Get request workflow ////////////////////////////////////////////
+		// Request
+        try {
+            // Set the method, endpoint, header and query params
+            rest_v2.setHttpMethod('get');
+            rest_v2.setEndpoint(api_end_point);
+            rest_v2.setQueryParameter('serial', cleaned_up_serial_num);
+            rest_v2.setRequestHeader('ClientID', api_key);
+
+            response = rest_v2.executeAsync();
+            response.waitForResponse(10);
+						
+            response_body = JSON.parse(response.getBody());
+			status_code = response.getStatusCode();
+			
+			// Checking that the object retrieved was a valid contract 
+			if(!response_body.Warranty || response_body.Warranty.length < 0){
+				return {contract_json: 'Serial number ' + serial_num + ' retrieved invalid Lenovo contract'};
+			}
+			
+			// Check if lenovo returned an error
+			if(response_body.ErrorCode){
+				return {contract_json: response_body.ErrorMessage}; // return the error
+			}
+						
+        } catch (error) {
+            response_body = error.getMessage();
+			return;
+        }
+	
+		
+		return {status_code: status_code, contract_json: response_body};
+
+    },
+
+    type: 'Lenovo_API_Utils'
+});]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2021-02-01 21:53:44</sys_created_on>
+        <sys_id>be7de00a078220103af7f2ae7c1ed0c3</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Lenovo_API_Utils</sys_name>
+        <sys_package display_value="Lenovo Warranty Import" source="x_500374_leno_warr">abde5c0e074220103af7f2ae7c1ed08c</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Lenovo Warranty Import">abde5c0e074220103af7f2ae7c1ed08c</sys_scope>
+        <sys_update_name>sys_script_include_be7de00a078220103af7f2ae7c1ed0c3</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2021-02-01 21:53:44</sys_updated_on>
+    </sys_script_include>
+</record_update>

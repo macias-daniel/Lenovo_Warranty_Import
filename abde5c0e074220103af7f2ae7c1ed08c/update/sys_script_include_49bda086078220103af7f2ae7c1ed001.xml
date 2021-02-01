@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>x_500374_leno_warr.Lenovo_App_Utils</api_name>
+        <caller_access/>
+        <client_callable>true</client_callable>
+        <description>App Helper functions</description>
+        <name>Lenovo_App_Utils</name>
+        <script><![CDATA[var Lenovo_App_Utils = Class.create();
+Lenovo_App_Utils.prototype = Object.extendsObject(global.AbstractAjaxProcessor, {
+
+    // < =============================================== Logs ===============================================>
+    // Function creating a new entry in the Logs table
+    create_log: function(message, status) {
+
+        var log_table_gr = new GlideRecord('x_500374_leno_warr_logs');
+
+        log_table_gr.initialize();
+        log_table_gr.message = message;
+        log_table_gr.status = status;
+
+        if (status === undefined) // Used to default status to Information
+            log_table_gr.status = 'Information';
+
+        log_table_gr.insert();
+        return;
+
+    },
+
+    // Function logs depending on logging_type system property
+    function_log: function(function_location, function_name) {
+		
+        var logging_type = gs.getProperty('x_500374_leno_warr.logging_type');
+
+        //  Depending on the logging type, log things to different places
+        if (logging_type == 'app-logs') {
+            this.create_log('In ' + function_location + ' - ' + function_name + ' function...', 'Debug');
+        } else if (logging_type == 'info') {
+            gs.addInfoMessage('In ' + function_location + ' - ' + function_name + ' function...');
+        } else if (logging_type == 'all') {
+            this.create_log('In ' + function_location + ' - ' + function_name + ' function...', 'Debug');
+            gs.addInfoMessage('In ' + function_location + ' - ' + function_name + ' function...');
+        }
+
+    },
+
+    // Delete old entries on Lenovo Warranty Imports Logs Table
+    truncate_logs: function() {
+
+        this.function_log('Lenovo_App_Utils', 'Truncate_Logs');
+
+		////////////////////////////////////////// Variables ////////////////////////////////////////////
+        // Glide records
+        var log_gr = new GlideRecord('x_500374_leno_warr_logs');
+        var system_properties_gr = new GlideRecord('sys_properties');
+
+        // Logs age storage
+        var truncate_logs_value;
+
+        // Encoded queries
+        var encoded_logs_query;
+
+		////////////////////////////////////////// Truncating of logs ////////////////////////////////////////////
+        // Query and store System Property - trucate_logs_value
+        if (system_properties_gr.get('21f02a960721a0103af7f2ae7c1ed0db'))
+            truncate_logs_value = system_properties_gr.getValue('value');
+
+        // Quering all records that were created before (truncate_logs_value) ago 
+        encoded_logs_query = 'sys_created_onRELATIVELT@dayofweek@ago@' + truncate_logs_value;
+
+        // Query and delete all records retrieved
+        log_gr.addEncodedQuery(encoded_logs_query);
+        log_gr.query();
+
+        // If the log_gr query retrieved values
+        if (log_gr.hasNext()) {
+            // Delete all retrieved records
+            log_gr.deleteMultiple();
+        }
+
+        return;
+
+    },
+
+    // < =============================================== App Setting ===============================================>
+
+    //get settings for advanced settings modal and return it to the caller
+    get_settings: function() {
+	
+        this.function_log('Lenovo_App_Utils', 'get_settings');
+
+		////////////////////////////////////////// Variables ////////////////////////////////////////////
+        // Get the users instance ID
+        var instance_id = gs.getProperty('instance_id');
+
+        // Construct a new glide record objects for tables to query
+        var ui_action_gr = new GlideRecord("sys_ui_action");
+        var business_rule_gr = new GlideRecord("sys_script");
+        var scheduled_email_gr = new GlideRecord("sysauto_report");
+        var system_properties_gr = new GlideRecord("sys_properties");
+
+        // Variables storing settings states and values
+        var get_contract;
+        var get_new_asset_contract;
+        var get_updated_asset_contract;
+        var expiring_contracts_notification;
+        var notification_contacts;
+        var logging_type;
+        var truncate_logs_value;
+
+        var settings; // Object to return back
+
+		////////////////////////////////////////// Retrieval of settings ////////////////////////////////////////////
+        // Query and create variables storing file active states
+        if (ui_action_gr.get('c81e96160721a0103af7f2ae7c1ed049'))
+            get_contract = ui_action_gr.getValue('active');
+
+        if (business_rule_gr.get('57221e1e07ed60103af7f2ae7c1ed01e'))
+            get_new_asset_contract = business_rule_gr.getValue('active');
+
+        if (business_rule_gr.get('74d2da1e07ed60103af7f2ae7c1ed011'))
+            get_updated_asset_contract = business_rule_gr.getValue('active');
+
+        if (scheduled_email_gr.get('9865de0c07c220103af7f2ae7c1ed013')) {
+            expiring_contracts_notification = scheduled_email_gr.getValue('active');
+
+            // In addition to the active state, get the current list (address_list) of notification contacts to display to user
+            notification_contacts = scheduled_email_gr.getValue('address_list');
+        }
+
+        // Query and create variables storing system property values
+        if (system_properties_gr.get('b29062960721a0103af7f2ae7c1ed07e'))
+            logging_type = system_properties_gr.getValue('value');
+
+        if (system_properties_gr.get('21f02a960721a0103af7f2ae7c1ed0db'))
+            truncate_logs_value = system_properties_gr.getValue('value');
+
+        // Put currently stored settings in current_settings object to pass back to client
+        settings = {
+            instance_id: instance_id,
+            get_contract: get_contract,
+            get_new_asset_contract: get_new_asset_contract,
+            get_updated_asset_contract: get_updated_asset_contract,
+            expiring_contracts_notification: expiring_contracts_notification,
+            notification_contacts: notification_contacts,
+            logging_type: logging_type,
+            truncate_logs_value: truncate_logs_value
+        };
+
+        return JSON.stringify(settings);
+
+    },
+
+    //get settings on advanced settings modal and update values accordingly
+    save_settings: function() {
+
+        this.function_log('Lenovo_App_Utils', 'save_settings');
+		
+		////////////////////////////////////////// Variables ////////////////////////////////////////////
+        // Declaring variables for newly saved file active states
+        var get_contract = this.getParameter("sysparm_get_contract");
+        var get_new_asset_contract = this.getParameter("sysparm_get_new_asset_contract");
+        var get_updated_asset_contract = this.getParameter("sysparm_get_updated_asset_contract");
+        var expiring_contracts_notification = this.getParameter("sysparm_expiring_contracts_notification");
+
+        // Declaring variables for newly saved system parameter values
+        var notification_contacts = this.getParameter('sysparm_notification_contacts');
+        var logging_type = this.getParameter('sysparm_logging_type');
+        var truncate_logs_value = this.getParameter('sysparm_truncate_logs_value');
+
+        // Glide Record object definiton
+        var ui_action_gr = new GlideRecord("sys_ui_action");
+        var business_rule_gr = new GlideRecord("sys_script");
+        var scheduled_email_gr = new GlideRecord("sysauto_report");
+        var system_properties_gr = new GlideRecord("sys_properties");
+		
+		////////////////////////////////////////// Value settings ////////////////////////////////////////////
+        // Using GlideRecord Objects retrieve files
+        // set active states of files using variables declared above
+        // and update files
+        if (ui_action_gr.get('c81e96160721a0103af7f2ae7c1ed049')) {
+            ui_action_gr.setValue('active', get_contract);
+            ui_action_gr.update();
+        }
+
+        if (business_rule_gr.get('57221e1e07ed60103af7f2ae7c1ed01e')) {
+            business_rule_gr.setValue('active', get_new_asset_contract);
+            business_rule_gr.update();
+        }
+
+        if (business_rule_gr.get('74d2da1e07ed60103af7f2ae7c1ed011')) {
+            business_rule_gr.setValue('active', get_updated_asset_contract);
+            business_rule_gr.update();
+        }
+
+        if (scheduled_email_gr.get('9865de0c07c220103af7f2ae7c1ed013')) {
+            scheduled_email_gr.setValue('active', expiring_contracts_notification);
+
+            // In adition to active state set the address_list field using emails inputted by the user
+            scheduled_email_gr.setValue('address_list', notification_contacts);
+
+            scheduled_email_gr.update();
+        }
+
+        // Using GlideRecord Objects retrieve system parameters
+        // set value states of system parameters using variables declared above
+        // and update system parameters
+        if (system_properties_gr.get('b29062960721a0103af7f2ae7c1ed07e')) {
+            system_properties_gr.setValue('value', logging_type);
+            system_properties_gr.update();
+        }
+
+        if (system_properties_gr.get('21f02a960721a0103af7f2ae7c1ed0db')) {
+            system_properties_gr.setValue('value', truncate_logs_value);
+            system_properties_gr.update();
+        }
+
+        // Display info message on settings page
+        gs.addInfoMessage('Your settings have been saved.');
+
+    },
+
+    // < ============================================== API Creds =============================================>
+    // Create new entry in API Key Table
+    set_api_key: function() {
+
+		////////////////////////////////////////// Variables ////////////////////////////////////////////
+        // Sys parm retrieval
+        var api_key = this.getParameter('sysparm_api_key');
+
+        // API Endpoints
+        var bearer_token_endpoint = gs.getProperty('x_500374_leno_warr.warranty_api_endpoint'); // Change this
+
+        // Glide Records
+        var api_key_gr = new GlideRecord('x_500374_leno_warr_api_key');
+
+        // Data to return to client
+        var api_key_added = false;
+
+        // Storage
+        var response;
+		
+		////////////////////////////////////////// Data validation ////////////////////////////////////////////
+        api_key_gr.query(); // query all data on api_key_table (there should only be one)
+		
+        if (api_key_gr.next()) { // Retrieved something
+            gs.addErrorMessage('API Credentials for Lenovo already exists, please delete it to add a new one.');
+        } else if (api_key.length === 0) { // A client id was submited
+            gs.addErrorMessage('Please input an API Key before submitting.');
+        } else { // Test API Key
+
+            var rest_v2 = new sn_ws.RESTMessageV2();
+            rest_v2.setHttpMethod('get');
+            rest_v2.setEndpoint(bearer_token_endpoint);
+            rest_v2.setQueryParameter('vendor', 'Lenovo');
+            rest_v2.setQueryParameter('serialnumbers', 'testingAPIKey'); // Setting dummy serial number to test apiKey
+            rest_v2.setRequestHeader('clientid', api_key);
+
+            response = rest_v2.execute();
+            var httpResponseStatus = response.getStatusCode();
+
+            if (httpResponseStatus == 401) { // Error message was recieved
+                gs.addErrorMessage('Your API Key is invalid according to Lenovo. Please double check you have the correct key.');
+            } else {
+				
+				////////////////////////////////////////// Setting API Key ////////////////////////////////////////////
+                // Add api_credentials
+                api_key_gr.initialize();
+                api_key_gr.api_key = api_key;
+                api_key_gr.insert();
+
+                api_key_added = true;
+
+                gs.addInfoMessage('Your API Key was sucessfully added.');
+            }
+
+            return api_key_added;
+        }
+    },
+
+    // Get API Credentials Stored in API Key Table
+    get_api_key: function() {
+
+		////////////////////////////////////////// Variables ////////////////////////////////////////////
+        // Glide Record
+        var api_key_gr = new GlideRecord('x_500374_leno_warr_api_key');
+
+        // Var to return
+        var api_key_retrieved = false;
+
+		////////////////////////////////////////// Key retrieval ////////////////////////////////////////////
+        api_key_gr.setLimit(1);
+        api_key_gr.query();
+
+        if (api_key_gr.next()) { // Data was successfully retrieved
+            api_key_retrieved = api_key_gr.api_key;
+        } else { // no data in object
+            gs.addErrorMessage('It looks like you have not yet added your Lenovo API Key. ' +
+                ' Please head over to ' + gs.getProperty('x_500374_leno_warr.settings_page_url') +
+                ' to input your Key.');
+            this.create_log('It looks like you have not yet added your Lenovo API Key.' +
+                ' Please head over to Lenovo Warranty Import Settings to input your Key.', 'Error');
+        }
+
+        return api_key_retrieved;
+
+    },
+
+    type: 'Lenovo_App_Utils'
+});]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2021-02-01 21:54:09</sys_created_on>
+        <sys_id>49bda086078220103af7f2ae7c1ed001</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Lenovo_App_Utils</sys_name>
+        <sys_package display_value="Lenovo Warranty Import" source="x_500374_leno_warr">abde5c0e074220103af7f2ae7c1ed08c</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Lenovo Warranty Import">abde5c0e074220103af7f2ae7c1ed08c</sys_scope>
+        <sys_update_name>sys_script_include_49bda086078220103af7f2ae7c1ed001</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2021-02-01 21:54:09</sys_updated_on>
+    </sys_script_include>
+</record_update>

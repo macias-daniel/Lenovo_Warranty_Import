@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>x_500374_leno_warr.Lenovo_Contract_Processing_Utils</api_name>
+        <caller_access/>
+        <client_callable>true</client_callable>
+        <description/>
+        <name>Lenovo_Contract_Processing_Utils</name>
+        <script><![CDATA[var Lenovo_Contract_Processing_Utils = Class.create();
+Lenovo_Contract_Processing_Utils.prototype = Object.extendsObject(global.AbstractAjaxProcessor, {
+
+    // Create custom JSON object using values retrieved and return that JSON to the called
+    scrub_contract_json: function(raw_json) {
+
+		////////////////////////////////////////// Variables ////////////////////////////////////////////
+        // GlideRecord
+        var contract_model_gr = new GlideRecord('cmdb_contract_product_model');
+        var core_company_gr = new GlideRecord('core_company');
+		
+		// Script includes
+        var app_utils = new Lenovo_App_Utils;
+
+        // Queries
+        var lenovo_company_query = 'nameLIKELenovo';
+        var warranty_model_query = "nameLIKEWarranty";
+
+        // Variable to return storing newly scrubbed json
+        var scrubbed_json;
+
+        // Storing asset individual warranities
+        var contracts = raw_json.Warranty;
+        var sorted_contracts;
+		
+        // Storing JSON Data
+        var contract_name = 'Lenovo Warranty';
+        var contract_description = '';
+        var serial_number = raw_json.Serial;
+        var purchased_date = raw_json.Purchased;
+        var ship_date = raw_json.Shipped;
+        var country_code = raw_json.Country;
+        var upgrade_url = raw_json.UpgradeUrl;
+        var in_contract = !raw_json.InWarranty;
+
+        var contract_start;
+        var contract_end;
+        var renewal_start;
+        var renewal_end;
+        var renewal = false;
+
+        // Variables to hold times to compare
+        var current_gdt;
+        var renewal_gdt_has_passed;
+
+        // Sys id for warranty model and company stored for use in the create_contract function in contract proccessing utils
+        var company_sys_id;
+        var contract_sys_id;
+
+        app_utils.function_log('API_Utils', 'scrub_contract_data');
+
+		////////////////////////////////////////// Data validation ////////////////////////////////////////////
+		
+		// Make query on company table looking for "Lenovo", if no company is present, error out.
+        core_company_gr.addEncodedQuery(lenovo_company_query);
+        core_company_gr.setLimit(1);
+        core_company_gr.query();
+
+        if (!core_company_gr.hasNext()) {
+            app_utils.create_log('Lenovo Company does not exist, ' +
+                'please create the Company and then try the "Get Contract" action again.', 'Error');
+            gs.addErrorMessage('Lenovo Company does not exist, ' +
+                'please create the Company and then try the "Get Contract" action again.');
+            return;
+        } else {
+            while (core_company_gr.next()) {
+                company_sys_id = core_company_gr.sys_id; // Get the companies sys_id for later use
+            }
+        }
+
+       // Make query on warranty table looking for "Warranty" model, if no model is present, error out.
+        contract_model_gr.addEncodedQuery(warranty_model_query);
+        contract_model_gr.setLimit(1);
+        contract_model_gr.query();
+
+        if (!contract_model_gr.hasNext()) { // No record of the warranty model is found
+            app_utils.create_log('Warranty Contract Model does not exist, ' +
+                'please create the Contract Model and then try the "Get Contract" action again.', 'Error');
+            gs.addErrorMessage('Warranty Contract Model does not exist, ' +
+                'please create the Contract Model and then try the "Get Contract" action again.');
+            return;
+        } else {
+            while (contract_model_gr.next()) {
+                contract_sys_id = contract_model_gr.sys_id;  // Get the warranties sys_id for later use
+            }
+        }
+
+        ////////////////////////////////////////// JSON Scrubbing ////////////////////////////////////////////
+		
+		// Building the contracts header
+        contract_description = contract_description.concat(
+            '------ General Info ------', '\n\n',
+            'Serial Number: ', serial_number, '\n',
+            'Purchase Date: ', purchased_date.substring(0, 10), '\n',
+            'Ship Date: ', ship_date.substring(0, 10), '\n',
+            'Country Code: ', country_code, '\n',
+            '------ Warranties ------', '\n\n');
+		
+		// sorting warranties so the are displayed in the correct order in description
+		sorted_contracts = contracts.sort(function(a, b) {
+            var date_a = new GlideDateTime(a.End);
+            var date_b = new GlideDateTime(b.End);
+            if(date_a > date_b) { return 1; } else { return -1; }
+        });
+
+		// Loop through each of the assets warranties and manage data
+        for (var i = 0; i < sorted_contracts.length; i++) { 
+
+            var warranty_type = sorted_contracts[i].Type;
+
+            // Depending on the warranty type, set different variables for later use on contract fields
+            if (warranty_type.match(/BASE/g)) {
+                contract_start = new GlideDateTime(sorted_contracts[i].Start);
+                contract_end = new GlideDateTime(sorted_contracts[i].End);
+            }
+
+            if (warranty_type.match(/UPGRADE/g)) {
+                contract_end = new GlideDateTime(sorted_contracts[i].End);
+            }
+
+            if (warranty_type.match(/EXTENDED/g)) {
+                renewal = true;
+                renewal_start = new GlideDateTime(sorted_contracts[i].Start);
+                renewal_end = new GlideDateTime(sorted_contracts[i].End);
+                contract_start = new GlideDateTime(sorted_contracts[i].Start);
+                contract_end = new GlideDateTime(sorted_contracts[i].End);
+            }
+
+            // Building of individuial contract descriptions  to display
+            contract_description = contract_description.concat(
+                'Type: ', warranty_type, '\n',
+                'Name: ', sorted_contracts[i].Name, '\n',
+                'Description: ', sorted_contracts[i].Description, '\n',
+                'Start Date: ', sorted_contracts[i].Start.substring(0, 10), '\n',
+                'End Date: ', sorted_contracts[i].End.substring(0, 10), '\n\n');
+        }
+
+        current_gdt = new GlideDateTime();
+        renewal_gdt_has_passed = current_gdt > renewal_end; // creating contition checking if the renewal date has passed
+
+        // Check that renewal_end is before current Date/Time because :
+		//     When retrieving a hardware contract that has had an extension, 
+		//     and the extension end date is before the retrieval date ServiceNow will not allow for the "Renewal" tab to be populated.
+        //     However other fields such as Contract end dates are updated to reflect this
+		if (renewal_end && renewal_gdt_has_passed) {
+            contract_description = contract_description.concat(
+                '*** Detected a Renewal Start and End Date that could not be set on this contract. ' +
+                'ServiceNow does not allow for you to set the Renewal Dates of a contract if the time of creating or updating the Contract is after the Renewal End Date. ' +
+                'As such, the Renewal Start and End Dates of this contract cannot be set; however, the Contract End Date has been updated to reflect the Renewal End Date allowing for any reports to run correctly when evaluating the entire contract length. ***', '\n\n');
+        }
+
+        // Add one final line to the description to display
+        contract_description = contract_description.concat('Upgrade URL: ', upgrade_url, '\n\n', 'Last Retrieved by Lenovo Warranty Import at ' + current_gdt + ' UTC');
+
+		// Building object to return
+        scrubbed_json = {
+            contracts: sorted_contracts,
+            contract_name: contract_name,
+            contract_description: contract_description,
+            serial_number: serial_number,
+            upgrade_url: upgrade_url,
+            in_contract: in_contract,
+            contract_start: contract_start,
+            contract_end: contract_end,
+            renewal: renewal,
+            renewal_start: renewal_start,
+            renewal_end: renewal_end,
+            renewal_gdt_has_passed: renewal_gdt_has_passed,
+            company_sys_id: company_sys_id,
+            contract_model_sys_id: contract_sys_id,
+        };
+
+
+        // Send back scrubbed Dell contracts
+        return scrubbed_json;
+    },
+
+    // Create / update respective contracts and return it sys_id and end_date to the caller
+    create_contract: function(scrubbed_json, asset_sys_id) {
+		
+		////////////////////////////////////////// Variables ////////////////////////////////////////////
+		// Script references
+        var app_utils = new Lenovo_App_Utils;
+
+		// Glide records
+        var contract_gr = new GlideRecord('ast_contract');
+
+        // Define variables for creating and updating contracts
+        var contract;
+        var contract_sys_id;
+        var contract_end_date = scrubbed_json.contract_end;
+
+        app_utils.function_log('Lenovo_Contract_Processing_Utils', 'create_contract'); // See Lenovo_App_Utils
+
+		////////////////////////////////////////// Contract Creation ////////////////////////////////////////////
+		
+		// Query for the contract, to check if it already exists 
+        contract_gr.addQuery('vendor_contract', scrubbed_json.serial_number);
+        contract_gr.query(); 
+
+        if (contract_gr.hasNext()) { 
+            while (contract_gr.next()) {
+				// Update the contracts values using newly retrieved JSON
+                contract_gr.setValue('short_description', scrubbed_json.contract_name);
+                contract_gr.setValue('starts', scrubbed_json.contract_start);
+                contract_gr.setValue('ends', scrubbed_json.contract_end);
+                contract_gr.setValue('description', scrubbed_json.contract_description);
+                contract_gr.setValue('vendor', scrubbed_json.company_sys_id);
+
+                if (scrubbed_json.renewal && !scrubbed_json.renewal_gdt_has_passed) { // IF the renewal date has not passed
+                    contract_gr.setValue('renewable', false);
+                    contract_gr.setValue('renewal_date', scrubbed_json.renewal_start);
+                    contract_gr.setValue('renewal_end_date', scrubbed_json.renewal_end);
+                }
+
+                contract_sys_id = contract_gr.update(); // Update contract and store its sys id
+            }
+        } else { 
+			// Create a brand new entry in the contract staging table using newly retrieved JSON
+            var contract_staging_gr = new GlideRecord('x_500374_leno_warr_contract_staging');
+
+            contract_staging_gr.newRecord();
+            contract_staging_gr.contract_state = 'active';
+            contract_staging_gr.short_description = scrubbed_json.contract_name;
+            contract_staging_gr.starts = scrubbed_json.contract_start;
+            contract_staging_gr.ends = scrubbed_json.contract_end;
+            contract_staging_gr.description = scrubbed_json.contract_description;
+            contract_staging_gr.vendor_contract = scrubbed_json.serial_number;
+            contract_staging_gr.contract_model = scrubbed_json.contract_model_sys_id;
+            contract_staging_gr.vendor = scrubbed_json.company_sys_id;
+
+            if (scrubbed_json.renewal && !scrubbed_json.renewal_gdt_has_passed) { // Renewal is true and renewal end date has not passed
+                contract_staging_gr.renewable = false;
+                contract_staging_gr.renewal_date = scrubbed_json.renewal_start;
+                contract_staging_gr.renewal_end_date = scrubbed_json.renewal_end;
+            }
+
+            contract_staging_gr.insert();
+
+            if (contract_gr.get('vendor_contract', scrubbed_json.serial_number)) { // Newly created contract
+
+                contract_gr.setValue('substate', ''); // Update substate to -- None -- as contract has been created and approved
+                contract_sys_id = contract_gr.update(); // Update and store updated contract sys_id
+
+            }
+        }
+		// Build object and return it for later use
+        contract = {
+            sys_id: contract_sys_id,
+            contract_end_date: contract_end_date
+        };
+
+        return contract;
+
+    },
+
+    // Assign created / udpated contracts to the Asset
+    assign_contract_to_asset: function(contract, asset_sys_id) {
+
+		////////////////////////////////////////// Variables ////////////////////////////////////////////
+        var app_utils = new Lenovo_App_Utils;
+		
+		var covered_assets_gr = new GlideRecord('clm_m2m_contract_asset');
+		var asset_gr = new GlideRecord('alm_hardware');
+
+
+        // Counter so we can return the user how many contracts were added
+        var processed_contracts = 0;
+
+        // Get the current date so we can set the date added of the contract
+        var current_date = new GlideDate();
+		
+		////////////////////////////////////////// Assigning asset to contract ////////////////////////////////////////////
+		app_utils.function_log('Lenovo_Contract_Processing_Utils', 'assign_asset_to_contract'); // See Lenovo_App_Utils
+
+        current_date.getByFormat("MM-dd-yyyy");
+
+
+        // See if there is an association between the asset and newly processed contract
+        covered_assets_gr.initialize();
+        covered_assets_gr.addQuery('contract', contract.sys_id);
+        covered_assets_gr.addQuery('asset', asset_sys_id);
+        covered_assets_gr.query();
+
+       
+        if (!covered_assets_gr.hasNext()) { // If there is no contract/asset association, create one
+            covered_assets_gr.contract = contract.sys_id;
+            covered_assets_gr.asset = asset_sys_id;
+            covered_assets_gr.added = current_date;
+            covered_assets_gr.insert();
+        }
+
+        // Update hardware assets warranty end date
+        if (asset_gr.get(asset_sys_id)) {
+            asset_gr.warranty_expiration = contract.contract_end_date;
+            asset_gr.update();
+        }
+
+    },
+
+    type: 'Lenovo_Contract_Processing_Utils'
+});]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2021-02-01 21:57:16</sys_created_on>
+        <sys_id>096ea40a078220103af7f2ae7c1ed039</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Lenovo_Contract_Processing_Utils</sys_name>
+        <sys_package display_value="Lenovo Warranty Import" source="x_500374_leno_warr">abde5c0e074220103af7f2ae7c1ed08c</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Lenovo Warranty Import">abde5c0e074220103af7f2ae7c1ed08c</sys_scope>
+        <sys_update_name>sys_script_include_096ea40a078220103af7f2ae7c1ed039</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2021-02-01 21:57:16</sys_updated_on>
+    </sys_script_include>
+</record_update>
