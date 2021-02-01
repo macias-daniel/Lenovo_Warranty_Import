@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sysauto_script">
+    <sysauto_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <business_calendar/>
+        <condition/>
+        <conditional>false</conditional>
+        <entered_time>1970-01-01 00:00:00</entered_time>
+        <name>Refresh Scheduled Job Time Zone</name>
+        <offset/>
+        <offset_type>0</offset_type>
+        <run_as display_value="System Administrator">6816f79cc0a8016401c5a33be04be441</run_as>
+        <run_as_tz/>
+        <run_dayofmonth>1</run_dayofmonth>
+        <run_dayofweek>1</run_dayofweek>
+        <run_period/>
+        <run_start>2021-02-01 22:13:11</run_start>
+        <run_time>1970-01-01 08:00:00</run_time>
+        <run_type>on_demand</run_type>
+        <script><![CDATA[// Refresh log maintenance and expiring contract notifications time zone so no errors occur
+var app_utils = new Lenovo_App_Utils;
+var scheduled_job_utils = new Lenovo_Scheduled_Job_Utils;
+
+app_utils.function_log('Scheduled Script Execution', 'Refresh Scheduled Job Time Zone');
+
+scheduled_job_utils.refresh_schedule_time_zone('sysauto_script','dba12f7d076d20103af7f2ae7c1ed0b6', '10'); // Log Maintenance
+scheduled_job_utils.refresh_schedule_time_zone('sysauto_report','f08c5661076120103af7f2ae7c1ed002', '20'); // Expiring Contracts Notification
+
+]]></script>
+        <sys_class_name>sysauto_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2021-02-01 22:13:28</sys_created_on>
+        <sys_id>4422b4ca078220103af7f2ae7c1ed034</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Refresh Scheduled Job Time Zone</sys_name>
+        <sys_package display_value="Lenovo Warranty Import" source="x_500374_leno_warr">abde5c0e074220103af7f2ae7c1ed08c</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Lenovo Warranty Import">abde5c0e074220103af7f2ae7c1ed08c</sys_scope>
+        <sys_update_name>sysauto_script_4422b4ca078220103af7f2ae7c1ed034</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2021-02-01 22:13:28</sys_updated_on>
+        <time_zone/>
+        <upgrade_safe>false</upgrade_safe>
+    </sysauto_script>
+</record_update>
