@@ -172,6 +172,10 @@ jQuery("#expiring-contracts-notification").click(function() {
 	.no-margin-top{
 		margin-top: 0px;
 	}
+	
+	.no-marging-bottom{
+		margin-bottom: 0px;
+	}
 
 	#logging-type{
 		height: 30px;
@@ -251,15 +255,7 @@ jQuery("#expiring-contracts-notification").click(function() {
 		</div>
 	</div>
 
-	<hr class = "no-margin-top"/>
-	
-	<!-- Expiring Contracts Notification Contacts  -->
-	<div class = "row mt-2 mb-2">
-		<div class = "col ml-4">
-			<label for="notification-contacts" class = "advanced-settings-label">Notification Contacts (separated with commas):</label>
-			<input id="notification-contacts" class = "form-control" type="text" placeholder = 'info@company.com'></input>
-		</div>
-	</div>
+	<hr class = "no-margin-top no-marging-bottom"/>
 
 	<!-- Scheduled Job - Expiring Contracts Notification -->
 	<div class= "row">
@@ -271,6 +267,14 @@ jQuery("#expiring-contracts-notification").click(function() {
 					Scheduled Job - Expiring Contracts Notification
 				</label>
 			</div>
+		</div>
+	</div>
+	
+	<!-- Expiring Contracts Notification Contacts  -->
+	<div class = "row mt-2 mb-4">
+		<div class = "col ml-4">
+			<label for="notification-contacts" class = "advanced-settings-label">Notification Contacts (separated with commas):</label>
+			<input id="notification-contacts" class = "form-control" type="text" placeholder = 'info@company.com'></input>
 		</div>
 	</div>
 
@@ -321,13 +325,13 @@ jQuery("#expiring-contracts-notification").click(function() {
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2021-02-01 21:13:38</sys_created_on>
         <sys_id>a864e082078220103af7f2ae7c1ed025</sys_id>
-        <sys_mod_count>0</sys_mod_count>
+        <sys_mod_count>4</sys_mod_count>
         <sys_name>advanced_settings_modal</sys_name>
         <sys_package display_value="Lenovo Warranty Import" source="x_500374_leno_warr">abde5c0e074220103af7f2ae7c1ed08c</sys_package>
         <sys_policy/>
         <sys_scope display_value="Lenovo Warranty Import">abde5c0e074220103af7f2ae7c1ed08c</sys_scope>
         <sys_update_name>sys_ui_page_a864e082078220103af7f2ae7c1ed025</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2021-02-01 21:13:38</sys_updated_on>
+        <sys_updated_on>2021-02-01 22:38:22</sys_updated_on>
     </sys_ui_page>
 </record_update>
