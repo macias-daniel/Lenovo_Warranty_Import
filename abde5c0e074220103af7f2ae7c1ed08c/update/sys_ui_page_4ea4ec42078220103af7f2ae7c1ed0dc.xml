@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_page">
+    <sys_ui_page action="INSERT_OR_UPDATE">
+        <category>general</category>
+        <client_script><![CDATA[// Modal takes user to daniels thoughts kb
+jQuery('#continue').click(function() {
+	
+	// Grab UI page from passing modal
+	var post_slug = jQuery('#post_slug').val();
+	
+	// Grab kb home url
+	var knowledge_base_home = jQuery('#knowledge_base_home').val();
+	
+	var constructed_kb_url;
+	
+	alert(post_slug);
+	
+	// Sending user to different kb posts depending on the url slug
+	if(post_slug == 'lenovo-kb'){ // Lenovo KB
+		constructed_kb_url = knowledge_base_home + '/blog/categories/lenovo-warranty-import';
+	} else if(post_slug == 'home'){ // by-daniel site
+		constructed_kb_url = knowledge_base_home;
+	} else {
+		constructed_kb_url = knowledge_base_home +'/post/'+ post_slug;
+	}	
+	
+	window.open(constructed_kb_url, 'blank');
+});]]></client_script>
+        <description>Modal notifying users they are being redirected to Lenovo Warranty Imports Knowledge Base. Modal accessed through Lenovo Warranty Import's setting module.</description>
+        <direct>false</direct>
+        <endpoint>x_500374_leno_warr_kb_redirect_modal.do</endpoint>
+        <html><![CDATA[<?xml version="1.0" encoding="utf-8" ?>
+<j:jelly trim="false" xmlns:j="jelly:core" xmlns:g="glide" xmlns:j2="null" xmlns:g2="null">
+	
+<!-- 	Grab passed UI Page sysparm from passing modal -->
+	<j:set var="jvar_ui_page" value="${sysparm_ui_page}"/>
+	<input type="hidden" id="post_slug" value="${jvar_ui_page}"/>
+	
+<!-- 	Grab kb Home page gs property -->
+	<j:set var="jvar_knowledge_base_home" value="$[gs.getProperty('x_500374_leno_warr.knowledge_base_home')]" />	
+	<input type="hidden" id="knowledge_base_home" value="${jvar_knowledge_base_home}"/>
+		
+	<style>
+	    .modal-header .close {
+		    padding: .6rem .65rem !important;
+		}
+	</style>
+	<h3>Headed to Lenovo Warranty Import's Knowledge Base</h3>
+	<hr/>
+	<br/>
+	<p>Just a heads up, you are headed to Lenovo Warranty Import's website!</p>
+	<br/>	
+	<div class="modal-footer">
+		<button id="close" type="button" class="btn btn-secondary btn-lg" data-dismiss="modal">Close</button>
+		<button id="continue" type="button" class="btn btn-secondary btn-lg" data-dismiss="modal">Continue</button>
+	</div>
+</j:jelly>]]></html>
+        <name>kb_redirect_modal</name>
+        <processing_script/>
+        <sys_class_name>sys_ui_page</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2021-02-01 21:14:47</sys_created_on>
+        <sys_id>4ea4ec42078220103af7f2ae7c1ed0dc</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>kb_redirect_modal</sys_name>
+        <sys_package display_value="Lenovo Warranty Import" source="x_500374_leno_warr">abde5c0e074220103af7f2ae7c1ed08c</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Lenovo Warranty Import">abde5c0e074220103af7f2ae7c1ed08c</sys_scope>
+        <sys_update_name>sys_ui_page_4ea4ec42078220103af7f2ae7c1ed0dc</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2021-02-01 21:14:47</sys_updated_on>
+    </sys_ui_page>
+</record_update>

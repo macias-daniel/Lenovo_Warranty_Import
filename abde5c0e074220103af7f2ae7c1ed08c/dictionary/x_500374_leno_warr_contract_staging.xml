@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element extends="sys_import_set_row" label="Lenovo Contract Staging" max_length="40" name="x_500374_leno_warr_contract_staging" type="collection">
+        <element attributes="edge_encryption_enabled=true" label="Contract Model" max_length="40" name="contract_model" type="string"/>
+        <element attributes="edge_encryption_enabled=true" label="Contract State" max_length="40" name="contract_state" type="string"/>
+        <element attributes="edge_encryption_enabled=true" label="Description" max_length="1000" name="description" type="string"/>
+        <element attributes="edge_encryption_enabled=true" label="Ends" max_length="40" name="ends" type="string"/>
+        <element attributes="edge_encryption_enabled=true" label="Renewable" max_length="40" name="renewable" type="string"/>
+        <element attributes="edge_encryption_enabled=true" label="Renewal Date" max_length="40" name="renewal_date" type="string"/>
+        <element attributes="edge_encryption_enabled=true" label="Renewal End Date" max_length="40" name="renewal_end_date" type="string"/>
+        <element attributes="edge_encryption_enabled=true" label="Short Description" max_length="40" name="short_description" type="string"/>
+        <element attributes="edge_encryption_enabled=true" label="Starts" max_length="40" name="starts" type="string"/>
+        <element attributes="edge_encryption_enabled=true" label="Vendor" max_length="40" name="vendor" type="string"/>
+        <element attributes="edge_encryption_enabled=true" label="Vendor Contract" max_length="40" name="vendor_contract" type="string"/>
+    </element>
+</database>

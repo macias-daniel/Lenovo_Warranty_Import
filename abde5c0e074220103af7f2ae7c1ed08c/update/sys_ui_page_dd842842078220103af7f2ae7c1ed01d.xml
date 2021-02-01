@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_page">
+    <sys_ui_page action="INSERT_OR_UPDATE">
+        <category>general</category>
+        <client_script><![CDATA[// Open Lenovo Warranty Imports  redirect modal, and pass url sysparm
+jQuery('#lenovo-api-kb').click(function() {
+	
+	GlideModal.get().destroy();
+	
+	var kb_redirect_modal = new GlideModal('x_500374_leno_warr_kb_redirect_modal'); 			      	
+	kb_redirect_modal.setPreference('sysparm_ui_page', 'lenovo-api-key-retrieval'); // Sets where modal where redirect
+	kb_redirect_modal.setWidth(550);
+    kb_redirect_modal.render();
+	
+});
+
+// Open Lenovo Warranty Imports redirect modal, and pass url sysparm
+jQuery('#lenovo-warranty-import-kb').click(function() {
+	
+	GlideModal.get().destroy();
+	
+	var kb_redirect_modal = new GlideModal('x_500374_leno_warr_kb_redirect_modal'); 			      	
+	kb_redirect_modal.setPreference('sysparm_ui_page', 'lenovo-kb'); // Sets where modal where redirect
+	kb_redirect_modal.setWidth(550);
+    kb_redirect_modal.render();
+	
+});]]></client_script>
+        <description>Modal giving user info about how to go about adding their Lenovo API Key to Lenovo Warranty Import. Modal accessed through Lenovo Warranty Import's setting module.</description>
+        <direct>false</direct>
+        <endpoint>x_500374_leno_warr_api_info_modal.do</endpoint>
+        <html><![CDATA[<?xml version="1.0" encoding="utf-8" ?>
+<j:jelly trim="false" xmlns:j="jelly:core" xmlns:g="glide" xmlns:j2="null" xmlns:g2="null">
+	<style>
+	    .modal-header .close {
+		    padding: .6rem .65rem !important;
+		}
+	</style>
+	<h3>API Key Info</h3>
+	<hr/>
+	<br/>
+	<p>Lenovo provides each customer with their own API key to access all of their contracts for purchased hardware. For directions on how to retrieve your Lenovo API Key, please reference Lenovo Warranty Import's Knowledge Base article:$[SP]<a id = "lenovo-api-kb" href = "#">API Key Retrieval</a>. Once the proper API information is retrieved input the key(s) to retrieve your contracts.</p>
+	<br/>	
+	<p>Any more questions? Navigate to the$[SP]<a id="lenovo-warranty-import-kb" href="#">Lenovo Warranty Import's Knowlege Base</a>$[SP]for assistance.</p>
+	<br/>
+	<div class="modal-footer">
+		<button id="close" type="button" class="btn btn-secondary btn-lg" data-dismiss="modal">Close</button>
+	</div>
+</j:jelly>]]></html>
+        <name>api_info_modal</name>
+        <processing_script/>
+        <sys_class_name>sys_ui_page</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2021-02-01 21:14:07</sys_created_on>
+        <sys_id>dd842842078220103af7f2ae7c1ed01d</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>api_info_modal</sys_name>
+        <sys_package display_value="Lenovo Warranty Import" source="x_500374_leno_warr">abde5c0e074220103af7f2ae7c1ed08c</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Lenovo Warranty Import">abde5c0e074220103af7f2ae7c1ed08c</sys_scope>
+        <sys_update_name>sys_ui_page_dd842842078220103af7f2ae7c1ed01d</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2021-02-01 21:14:07</sys_updated_on>
+    </sys_ui_page>
+</record_update>

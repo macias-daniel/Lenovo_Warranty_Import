@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_page">
+    <sys_ui_page action="INSERT_OR_UPDATE">
+        <category>general</category>
+        <client_script><![CDATA[var app_utils_ga = new GlideAjax('Lenovo_App_Utils');
+app_utils_ga.addParam('sysparm_name', 'get_settings');
+app_utils_ga.getXML(display_settings);
+
+// Grab settings and display on settings page
+function display_settings(response) {
+
+    var answer = response.responseXML.documentElement.getAttribute('answer');
+    var settings = JSON.parse(answer);
+
+    jQuery('#instance-id').text(settings.instance_id); // Set HI instance id
+
+    // Set active states of checkboxes
+    if (settings.get_contract === '1') {
+        jQuery('#get-contract').prop('checked', true);
+    } else {
+        jQuery('#get-contract').prop('checked', false);
+    }
+
+    if (settings.get_new_asset_contract === '1') {
+        jQuery('#get-new-asset-contract').prop('checked', true);
+    } else {
+        jQuery('#get-new-asset-contract').prop('checked', false);
+    }
+
+    if (settings.get_updated_asset_contract === '1') {
+        jQuery('#get-updated-asset-contract').prop('checked', true);
+    } else {
+        jQuery('#get-updated-asset-contract').prop('checked', false);
+    }
+
+    if (settings.expiring_contracts_notification === '1') {
+        jQuery('#expiring-contracts-notification').prop('checked', true);
+    } else {
+        jQuery('#expiring-contracts-notification').prop('checked', false);
+    }
+
+    // Set values for dropdown and input values
+    jQuery('#notification-contacts').val(settings.notification_contacts);
+    jQuery('#logging-type').val(settings.logging_type);
+    jQuery('#truncate-logs-value').val(settings.truncate_logs_value);
+}
+
+
+// < ==================================== On Click ================================= >
+
+// Save app setting
+jQuery("#save-settings").click(function() {
+
+    // Glide Ajax
+    var app_utils_ga = new GlideAjax('Lenovo_App_Utils');
+
+    // Store form value
+    var truncate_logs_value;
+
+    jQuery('#input-reminder').css('display', 'none'); // Removing error on save settings attempt
+
+    // Validate truncate logs value retrieved by user
+    truncate_logs_value = jQuery('#truncate-logs-value').val();
+    if (isNaN(truncate_logs_value) || truncate_logs_value < 1) {
+        jQuery('#input-reminder').css('display', 'block');
+        return;
+    }
+
+    app_utils_ga.addParam('sysparm_name', 'save_settings');
+
+    // Setting sysparms storing active states set by user
+    app_utils_ga.addParam('sysparm_get_contract', jQuery('#get-contract').prop('checked'));
+    app_utils_ga.addParam('sysparm_get_new_asset_contract', jQuery('#get-new-asset-contract').prop('checked'));
+    app_utils_ga.addParam('sysparm_get_updated_asset_contract', jQuery('#get-updated-asset-contract').prop('checked'));
+    app_utils_ga.addParam('sysparm_expiring_contracts_notification', jQuery('#expiring-contracts-notification').prop('checked'));
+
+	// Setting sysparm storing input values set by user
+    app_utils_ga.addParam('sysparm_notification_contacts', jQuery('#notification-contacts').val());
+    app_utils_ga.addParam('sysparm_logging_type', jQuery('#logging-type').val());
+    app_utils_ga.addParam('sysparm_truncate_logs_value', truncate_logs_value);
+
+    // Call back
+    app_utils_ga.getXML(save_settings_response);
+
+});
+
+// CALLBACK ^, destroys modal on save
+function save_settings_response(response) {
+
+    // Closeses modal on call back
+    GlideModal.get().destroy();
+
+    var save_settings_response = response.responseXML.documentElement.getAttribute('answer');
+    // Not doing anything here but processing call back so page can reload
+}
+
+// < ===================================== Form Logic =================================>
+jQuery("#get-contract").click(function() {
+
+    if (jQuery("#get-contract").is(':checked')) {
+        jQuery("#get-contract").attr('value', true);
+    } else {
+        jQuery("#get-contract").attr('value', false);
+    }
+
+});
+
+jQuery("#get-new-asset-contract").click(function() {
+
+    if (jQuery("#get-new-asset-contract").is(':checked')) {
+        jQuery("#get-new-asset-contract").attr('value', true);
+    } else {
+        jQuery("#get-new-asset-contract").attr('value', false);
+    }
+
+});
+
+jQuery("#get-updated-asset-contract").click(function() {
+
+    if (jQuery("#get-updated-asset-contract").is(':checked')) {
+        jQuery("#get-updated-asset-contract").attr('value', true);
+    } else {
+        jQuery("#get-updated-asset-contract").attr('value', false);
+    }
+
+});
+
+jQuery("#expiring-contracts-notification").click(function() {
+
+    if (jQuery("#expiring-contracts-notification").is(':checked')) {
+        jQuery("#expiring-contracts-notification").attr('value', true);
+    } else {
+        jQuery("#expiring-contracts-notification").attr('value', false);
+    }
+
+});]]></client_script>
+        <description>Modal allowing user to configure advanced settings (Active States of Scripts, Emails etc). Modal accessed through Lenovo Warranty Import's setting module.</description>
+        <direct>false</direct>
+        <endpoint>x_500374_leno_warr_advanced_settings_modal.do</endpoint>
+        <html><![CDATA[<?xml version="1.0" encoding="utf-8" ?>
+<j:jelly trim="false" xmlns:j="jelly:core" xmlns:g="glide" xmlns:j2="null" xmlns:g2="null">
+<style>
+	
+	.advanced-settings-label{
+		font-size: 11px;
+	}
+
+	.modal-header .close {
+		padding: .6rem .65rem !important;
+	}
+	
+	.checkbox, 
+	.c-checkbox{
+		margin-top: 10px;
+		margin-bottom: 10px;
+	}
+	
+	.instance-id{
+		font-size: 11px;
+	}
+	
+	.log-type{
+		margin-top: 5px;
+		padding-left: 15px;
+		padding-right: 15px
+	}
+
+	#notification-contacts{
+		width: 96%;
+		height: 30px;
+	}
+	
+	.no-margin-top{
+		margin-top: 0px;
+	}
+
+	#logging-type{
+		height: 30px;
+	}
+	
+	.truncate-logs-label{
+		font-size: 11px;	
+	}
+	
+	#truncate-logs-value{
+		width: 50px;
+		display: inline;
+	}
+	
+	
+	.warning-text{
+		color:red;
+	}
+		
+</style>
+
+	
+<div class = "container">
+	
+	<!--Title -->
+	<div class = "row">
+		<div class = "col title">
+			<h3>Advanced Settings</h3>
+		</div>
+	</div>
+	
+	<hr class = "no-margin-top"/>
+	
+	<!--Instance ID -->
+	<div class = "row">
+		<div class = "col ml-4">
+			<p class="instance-id">HI Instance ID:<span class="ml-2" id="instance-id"></span></p>
+		</div>
+	</div>
+
+	<!-- UI Action - Get Contract -->
+	<div class= "row">
+		<div class = "col">
+			<div class="checkbox c-checkbox">
+				<label for="get-contract" id="checkbox-label" class = "advanced-settings-label">
+					<input type="checkbox" id="get-contract" />
+					<span class="fa fa-check mr-2"></span>
+					UI Action - Get Contract
+				</label>
+			</div>
+		</div>
+	</div>
+
+	<!-- Business Rule - Get Contract on New Asset -->
+	<div class = "row">
+		<div class = "col">
+			<div class="checkbox c-checkbox">
+				<label for="get-new-asset-contract" id="checkbox-label" class = "advanced-settings-label">
+					<input type="checkbox" id="get-new-asset-contract" />
+					<span class="fa fa-check mr-2"></span>
+					Business Rule - Get Contract on New Asset
+				</label>
+			</div>
+		</div>
+	</div>
+	
+	<!-- Business Rule - Get Contract on Asset Update -->
+	<div class = "row">
+		<div class = "col">
+			<div class="checkbox c-checkbox">
+				<label for="get-updated-asset-contract" id="checkbox-label" class = "advanced-settings-label">
+					<input type="checkbox" id="get-updated-asset-contract" />
+					<span class="fa fa-check mr-2"></span>
+					Business Rule - Get Contract on Asset Update
+				</label>
+			</div>
+		</div>
+	</div>
+
+	<hr class = "no-margin-top"/>
+	
+	<!-- Expiring Contracts Notification Contacts  -->
+	<div class = "row mt-2 mb-2">
+		<div class = "col ml-4">
+			<label for="notification-contacts" class = "advanced-settings-label">Notification Contacts (separated with commas):</label>
+			<input id="notification-contacts" class = "form-control" type="text" placeholder = 'info@company.com'></input>
+		</div>
+	</div>
+
+	<!-- Scheduled Job - Expiring Contracts Notification -->
+	<div class= "row">
+		<div class = "col">
+			<div class="checkbox c-checkbox">
+				<label for="expiring-contracts-notification" id="checkbox-label" class = "advanced-settings-label">
+					<input type="checkbox" id="expiring-contracts-notification" />
+					<span class="fa fa-check mr-2"></span>
+					Scheduled Job - Expiring Contracts Notification
+				</label>
+			</div>
+		</div>
+	</div>
+
+	<hr class = "no-margin-top"/>
+	
+	<!--Logs dropdown -->
+	<div class="row form-group log-type mt-3">
+		<div class = "col">
+			<label for="logging-type" class = "advanced-settings-label">Log Level</label>
+			<select class="form-control form-control-lg" id="logging-type">
+				<option value="default" selected="selected">Default</option>
+				<option value="workflow-logs">Workflow Logs</option>
+				<option value="app-logs">App Logs</option>
+				<option value="info">Info Messages</option>
+				<option value="all">All</option>
+			</select>
+		</div>
+	</div>
+	
+	<!-- Truncate logs input -->
+	<div class = "row mt-4">
+		<div class = "col ml-4">
+			<p class = "truncate-logs-label">
+				Truncate Logs &#160; 
+					<span><input id="truncate-logs-value" class = "form-control" type="text" placeholder = '0'></input></span>
+				&#160; Day(s) Old<span class="warning-text">*</span>
+			</p>
+		</div>
+	</div>
+	
+	<!-- Truncate Logs Warning -->
+	<div class = "row ">
+		<div class = "col ml-4">
+				<p style="display:none;" class="warning-text advanced-settings-label" id="input-reminder">Please make sure that inputed value is greater than 0.</p>
+		</div>
+	</div>
+	
+	<!-- Closing Options -->
+	<div class="modal-footer">
+		<button id="close" type="button" class="btn btn-secondary btn-lg" data-dismiss="modal">Close</button>
+		<button id="save-settings" type="button" class="btn btn-lg border border-secondary" >Save Settings</button>
+	</div>
+</div>
+</j:jelly>]]></html>
+        <name>advanced_settings_modal</name>
+        <processing_script/>
+        <sys_class_name>sys_ui_page</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2021-02-01 21:13:38</sys_created_on>
+        <sys_id>a864e082078220103af7f2ae7c1ed025</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>advanced_settings_modal</sys_name>
+        <sys_package display_value="Lenovo Warranty Import" source="x_500374_leno_warr">abde5c0e074220103af7f2ae7c1ed08c</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Lenovo Warranty Import">abde5c0e074220103af7f2ae7c1ed08c</sys_scope>
+        <sys_update_name>sys_ui_page_a864e082078220103af7f2ae7c1ed025</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2021-02-01 21:13:38</sys_updated_on>
+    </sys_ui_page>
+</record_update>

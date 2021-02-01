@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_page">
+    <sys_ui_page action="INSERT_OR_UPDATE">
+        <category>general</category>
+        <client_script><![CDATA[// Open Lenovo API Retrieval redirect modal redirect modal, and pass url sysparm
+jQuery('#redirect').click(function() {
+	
+	GlideModal.get().destroy();
+	
+	var kb_redirect_modal = new GlideModal('x_500374_leno_warr_kb_redirect_modal'); 	
+	kb_redirect_modal.setPreference('sysparm_ui_page', 'lenovo-best-practice-guidance');
+	kb_redirect_modal.setWidth(550);
+    kb_redirect_modal.render();
+	
+});]]></client_script>
+        <description>Modal giving user info how to set up their Get All Contracts schedule. Modal accessed through Lenovo Warranty Import's setting module.</description>
+        <direct>false</direct>
+        <endpoint>x_500374_leno_warr_scheduled_contract_retrieval_info_modal.do</endpoint>
+        <html><![CDATA[<?xml version="1.0" encoding="utf-8" ?>
+<j:jelly trim="false" xmlns:j="jelly:core" xmlns:g="glide" xmlns:j2="null" xmlns:g2="null">
+	<style>
+	    .modal-header .close {
+		    padding: .6rem .65rem !important;
+		}
+	</style>
+	<h3>Scheduling Contract Retrieval Info</h3>
+	<hr/>
+	<br/>
+	<p>It is recommended to schedule your contract retrievals once a day, week or month to ensure an accurate hardware contract position at all times. We recommends to schedule this during off-peak times to minimize any customer disruption, and please be aware that retrieval duration can vary based upon the amount of hardware assets in your system. You may also initiate the contract retrievals schedule immediately by selecting the "Execute Now" button.</p>
+	<br/>	
+	<p>Any more questions? Navigate to the$[SP]<a id="redirect" href="#">Lenovo Warranty Import's KB</a>$[SP]for assistance.</p>
+	<br/>
+	<div class="modal-footer">
+		<button id="close" type="button" class="btn btn-secondary btn-lg" data-dismiss="modal">Close</button>
+	</div>
+</j:jelly>]]></html>
+        <name>scheduled_contract_retrieval_info_modal</name>
+        <processing_script/>
+        <sys_class_name>sys_ui_page</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2021-02-01 21:15:20</sys_created_on>
+        <sys_id>16c4e442078220103af7f2ae7c1ed0ec</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>scheduled_contract_retrieval_info_modal</sys_name>
+        <sys_package display_value="Lenovo Warranty Import" source="x_500374_leno_warr">abde5c0e074220103af7f2ae7c1ed08c</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Lenovo Warranty Import">abde5c0e074220103af7f2ae7c1ed08c</sys_scope>
+        <sys_update_name>sys_ui_page_16c4e442078220103af7f2ae7c1ed0ec</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2021-02-01 21:15:20</sys_updated_on>
+    </sys_ui_page>
+</record_update>

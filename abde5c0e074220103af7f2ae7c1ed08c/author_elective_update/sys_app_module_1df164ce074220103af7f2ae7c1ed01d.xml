@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_app_module">
+    <sys_app_module action="DELETE">
+        <active>true</active>
+        <application display_value="Lenovo Warranty Import">91f164ce074220103af7f2ae7c1ed00c</application>
+        <assessment/>
+        <device_type/>
+        <filter/>
+        <hint/>
+        <homepage/>
+        <image/>
+        <link_type>SEPARATOR</link_type>
+        <map_page/>
+        <mobile_title>Lenovo API Key</mobile_title>
+        <mobile_view_name>Mobile</mobile_view_name>
+        <name/>
+        <order>7</order>
+        <override_menu_roles>false</override_menu_roles>
+        <query/>
+        <report/>
+        <roles/>
+        <sys_class_name>sys_app_module</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2021-02-01 21:02:33</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>1df164ce074220103af7f2ae7c1ed01d</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Lenovo API Key</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="Lenovo Warranty Import" source="x_500374_leno_warr">abde5c0e074220103af7f2ae7c1ed08c</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Lenovo Warranty Import">abde5c0e074220103af7f2ae7c1ed08c</sys_scope>
+        <sys_update_name>sys_app_module_1df164ce074220103af7f2ae7c1ed01d</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2021-02-01 21:02:33</sys_updated_on>
+        <timeline_page/>
+        <title>Lenovo API Key</title>
+        <uncancelable>false</uncancelable>
+        <view_name/>
+        <window_name/>
+    </sys_app_module>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="Lenovo Warranty Import">abde5c0e074220103af7f2ae7c1ed08c</application>
+        <file_path/>
+        <instance_id>c93a1f4ddb1f9f004f035d00cf9619fb</instance_id>
+        <instance_name>dev64536</instance_name>
+        <name>sys_app_module_1df164ce074220103af7f2ae7c1ed01d</name>
+        <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_app_module"><sys_app_module action="INSERT_OR_UPDATE"><active>true</active><application display_value="Lenovo Warranty Import">91f164ce074220103af7f2ae7c1ed00c</application><assessment/><device_type/><filter/><hint/><homepage/><image/><link_type>SEPARATOR</link_type><map_page/><mobile_title>Lenovo API Key</mobile_title><mobile_view_name>Mobile</mobile_view_name><name/><order>7</order><override_menu_roles>false</override_menu_roles><query/><report/><roles/><sys_class_name>sys_app_module</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2021-02-01 21:02:33</sys_created_on><sys_domain>global</sys_domain><sys_domain_path>/</sys_domain_path><sys_id>1df164ce074220103af7f2ae7c1ed01d</sys_id><sys_mod_count>0</sys_mod_count><sys_name>Lenovo API Key</sys_name><sys_overrides/><sys_package display_value="Lenovo Warranty Import" source="x_500374_leno_warr">abde5c0e074220103af7f2ae7c1ed08c</sys_package><sys_policy/><sys_scope display_value="Lenovo Warranty Import">abde5c0e074220103af7f2ae7c1ed08c</sys_scope><sys_update_name>sys_app_module_1df164ce074220103af7f2ae7c1ed01d</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2021-02-01 21:02:33</sys_updated_on><timeline_page/><title>Lenovo API Key</title><uncancelable>false</uncancelable><view_name/><window_name/></sys_app_module></record_update>]]></payload>
+        <payload_hash>-2102876496</payload_hash>
+        <record_name>Lenovo API Key</record_name>
+        <reverted_from/>
+        <source>23de5c0e074220103af7f2ae7c1ed08f</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2021-02-01 21:02:33</sys_created_on>
+        <sys_id>59f164ce074220103af7f2ae7c1ed01f</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>1775f677d9e0000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2021-02-01 21:02:33</sys_updated_on>
+        <type>Module</type>
+        <update_guid>91f164ce424220108ef8c7913f21e21f</update_guid>
+        <update_guid_history>91f164ce424220108ef8c7913f21e21f:-2102876496</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="Lenovo API Key">b8532042078220103af7f2ae7c1ed046</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2021-02-01 21:08:32</sys_created_on>
+        <sys_db_object display_value="" name="sys_app_module">sys_app_module</sys_db_object>
+        <sys_id>4fdbb2c3198047c09d19dffefc6ba400</sys_id>
+        <sys_metadata>1df164ce074220103af7f2ae7c1ed01d</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Lenovo API Key</sys_name>
+        <sys_package display_value="Lenovo Warranty Import" source="x_500374_leno_warr">abde5c0e074220103af7f2ae7c1ed08c</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="Lenovo Warranty Import">abde5c0e074220103af7f2ae7c1ed08c</sys_scope>
+        <sys_scope_delete display_value="">3d65fe1f297544feb86fc7d48a7f0319</sys_scope_delete>
+        <sys_update_name>sys_app_module_1df164ce074220103af7f2ae7c1ed01d</sys_update_name>
+        <sys_update_version display_value="sys_app_module_1df164ce074220103af7f2ae7c1ed01d">59f164ce074220103af7f2ae7c1ed01f</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2021-02-01 21:08:32</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

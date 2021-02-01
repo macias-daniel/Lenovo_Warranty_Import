@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_security_acl">
+    <sys_security_acl action="DELETE">
+        <active>true</active>
+        <admin_overrides>true</admin_overrides>
+        <advanced>false</advanced>
+        <condition/>
+        <description/>
+        <name>x_500374_leno_warr_contract_staging</name>
+        <operation display_value="write">write</operation>
+        <script/>
+        <sys_class_name>sys_security_acl</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2021-02-01 21:00:25</sys_created_on>
+        <sys_id>4e71ac8e074220103af7f2ae7c1ed0e2</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x_500374_leno_warr_contract_staging</sys_name>
+        <sys_package display_value="Lenovo Warranty Import" source="x_500374_leno_warr">abde5c0e074220103af7f2ae7c1ed08c</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Lenovo Warranty Import">abde5c0e074220103af7f2ae7c1ed08c</sys_scope>
+        <sys_update_name>sys_security_acl_4e71ac8e074220103af7f2ae7c1ed0e2</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2021-02-01 21:00:25</sys_updated_on>
+        <type display_value="record">record</type>
+    </sys_security_acl>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="Lenovo Warranty Import">abde5c0e074220103af7f2ae7c1ed08c</application>
+        <file_path/>
+        <instance_id>c93a1f4ddb1f9f004f035d00cf9619fb</instance_id>
+        <instance_name>dev64536</instance_name>
+        <name>sys_security_acl_4e71ac8e074220103af7f2ae7c1ed0e2</name>
+        <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_security_acl"><sys_security_acl action="INSERT_OR_UPDATE"><active>true</active><admin_overrides>true</admin_overrides><advanced>false</advanced><condition/><description/><name>x_500374_leno_warr_contract_staging</name><operation display_value="write">write</operation><script/><sys_class_name>sys_security_acl</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2021-02-01 21:00:25</sys_created_on><sys_id>4e71ac8e074220103af7f2ae7c1ed0e2</sys_id><sys_mod_count>0</sys_mod_count><sys_name>x_500374_leno_warr_contract_staging</sys_name><sys_package display_value="Lenovo Warranty Import" source="x_500374_leno_warr">abde5c0e074220103af7f2ae7c1ed08c</sys_package><sys_policy/><sys_scope display_value="Lenovo Warranty Import">abde5c0e074220103af7f2ae7c1ed08c</sys_scope><sys_update_name>sys_security_acl_4e71ac8e074220103af7f2ae7c1ed0e2</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2021-02-01 21:00:25</sys_updated_on><type display_value="record">record</type></sys_security_acl></record_update>]]></payload>
+        <payload_hash>-1180890340</payload_hash>
+        <record_name>x_500374_leno_warr_contract_staging</record_name>
+        <reverted_from/>
+        <source>23de5c0e074220103af7f2ae7c1ed08f</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2021-02-01 21:00:25</sys_created_on>
+        <sys_id>4671ac8e074220103af7f2ae7c1ed0e5</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>1775f6587e70000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2021-02-01 21:00:25</sys_updated_on>
+        <type>Access Control</type>
+        <update_guid>8e71ac8e1642201058ba24cbc3a012e4</update_guid>
+        <update_guid_history>8e71ac8e1642201058ba24cbc3a012e4:-1180890340</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete/>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2021-02-01 21:10:06</sys_created_on>
+        <sys_db_object display_value="" name="sys_security_acl">sys_security_acl</sys_db_object>
+        <sys_id>59d1ff914d5a42dc9fba49b3f7c75290</sys_id>
+        <sys_metadata>4e71ac8e074220103af7f2ae7c1ed0e2</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x_500374_leno_warr_contract_staging</sys_name>
+        <sys_package display_value="Lenovo Warranty Import" source="x_500374_leno_warr">abde5c0e074220103af7f2ae7c1ed08c</sys_package>
+        <sys_parent display_value="x_500374_leno_warr_contract_staging">c971ac8e074220103af7f2ae7c1ed01e</sys_parent>
+        <sys_policy/>
+        <sys_scope display_value="Lenovo Warranty Import">abde5c0e074220103af7f2ae7c1ed08c</sys_scope>
+        <sys_scope_delete display_value="">3d65fe1f297544feb86fc7d48a7f0319</sys_scope_delete>
+        <sys_update_name>sys_security_acl_4e71ac8e074220103af7f2ae7c1ed0e2</sys_update_name>
+        <sys_update_version display_value="sys_security_acl_4e71ac8e074220103af7f2ae7c1ed0e2">4671ac8e074220103af7f2ae7c1ed0e5</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2021-02-01 21:10:06</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

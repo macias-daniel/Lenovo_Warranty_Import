@@ -1,0 +1,761 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_page">
+    <sys_ui_page action="INSERT_OR_UPDATE">
+        <category>general</category>
+        <client_script><![CDATA[jQuery(document).ready(function() {
+
+    var scheduled_job_utils_ga = new GlideAjax('Lenovo_Scheduled_Job_Utils');
+    scheduled_job_utils_ga.addParam('sysparm_name', 'get_get_all_contracts_schedule');
+    scheduled_job_utils_ga.getXML(display_get_all_contracts_schedule);
+
+});
+
+// Grab get all contracts schedule and present it on Settings page
+function display_get_all_contracts_schedule(response) {
+	
+    var contractScheduleResponse = response.responseXML.documentElement.getAttribute('answer');
+    var schedule = JSON.parse(contractScheduleResponse);
+
+    jQuery('#contract-frequency-select').val(schedule.type);
+    if (schedule.active == 1) {
+        jQuery('#active-checkbox-contract').prop('checked', true);
+    } else {
+        jQuery('#active-checkbox-contract').prop('checked', false);
+    }
+
+    jQuery('#contract-hour').val(schedule.hours);
+    jQuery('#contract-minute').val(schedule.minutes);
+    jQuery('#contract-second').val(schedule.seconds);
+
+    // Build Label
+    if (schedule.standard_time) {
+        jQuery('#schedule-label').text("Standard Time");
+    } else {
+        jQuery('#schedule-label').text("24 Hour Time");
+    }
+	
+    jQuery('#time-format').text(" (" + schedule.time_format + ") ");
+    jQuery('#session-time-zone').text(schedule.session_time_zone);
+
+    if (schedule.type == 'weekly') {
+        jQuery('#contract-day-select').val(schedule.day);
+    } else if (schedule.type == 'monthly') {
+        jQuery('#contract-month-day-select').val(schedule.day);
+        jQuery('.contract-day').css('display', 'none');
+        jQuery('.contract-month-day').css('display', 'block');
+    } else if (schedule.type == 'daily') {
+        jQuery('.contract-day').css('display', 'none');
+    }
+
+    // If standard time with am or pm show option
+    if (schedule.am_pm) {
+        jQuery('.contract-am-pm').css('display', 'block');
+        jQuery('#contract-am-pm-select').val(schedule.am_pm);
+    }
+
+}
+
+// < =========================================== Modal Toggles ========================================== >
+
+// Open api_info_modal
+jQuery('#info-api-icon').click(function() {
+	
+    var api_info_modal = new GlideModal('x_500374_leno_warr_api_info_modal');
+    api_info_modal.setWidth(550);
+    api_info_modal.render();
+	
+});
+
+// Open scheduled_contract_retrieval_info_modal
+jQuery('#info-scheduling-icon').click(function() {
+	
+    var scheduled_contract_retrieval_modal = new GlideModal('x_500374_leno_warr_scheduled_contract_retrieval_info_modal');
+    scheduled_contract_retrieval_modal.setWidth(550);
+    scheduled_contract_retrieval_modal.render();
+	
+});
+
+// Open advanced_settings_modal
+jQuery("#toggle-advanced-settings").click(function() {
+	
+    var advanced_settings_modal = new GlideModal('x_500374_leno_warr_advanced_settings_modal');
+    advanced_settings_modal.setWidth(550);
+    advanced_settings_modal.render();
+	
+});
+
+// Open kb redirect modal and pass url
+jQuery('#toggle-kb').click(function() {
+	
+    var kb_redirect_modal = new GlideModal('x_500374_leno_warr_kb_redirect_modal');
+    kb_redirect_modal.setPreference('sysparm_ui_page', 'lenovo-kb');
+    kb_redirect_modal.setWidth(550);
+    kb_redirect_modal.render();
+	
+});
+
+jQuery('#blog-redirect').click(function() {
+	
+    var site_redirect_modal = new GlideModal('x_500374_leno_warr_kb_redirect_modal');
+    site_redirect_modal.setPreference('sysparm_ui_page', 'home');
+    site_redirect_modal.setWidth(550);
+    site_redirect_modal.render();
+	
+});
+
+// < =========================================== On Click ========================================== >
+
+// Store users api key
+jQuery('#submit-api-creds').click(function() {
+	
+    event.preventDefault();
+
+    var app_utils_ga = new GlideAjax('Lenovo_App_Utils');
+    app_utils_ga.addParam('sysparm_name', 'set_api_key');
+    app_utils_ga.addParam('sysparm_api_key', jQuery('#api-key').val());
+    app_utils_ga.getXML(store_api_key_response);
+	
+});
+
+// CALLBACK ^, if storage was successful, clear api cred input fields
+function store_api_key_response(response) {
+	
+    var success = response.responseXML.documentElement.getAttribute('answer');
+	success = JSON.parse(success);
+    if (success) { // On success, clear fields
+        jQuery('#api-key').val('');
+    }
+	
+}
+
+// Trigger get all contracts
+jQuery("#get_all_contracts_btn").click(function() {
+
+    var scheduled_job_utils_ga = new GlideAjax('Lenovo_Scheduled_Job_Utils');
+
+    // Provide visual of processing request
+    jQuery("#loading-spinner").css("display", "block");
+    jQuery("#get_all_contracts_btn").text('Processing...');
+    jQuery('#get_all_contracts_btn').prepend('<span id="loading-spinner" class="mr-2 spinner-border" role="status" aria-hidden="true"></span>');
+
+    scheduled_job_utils_ga.addParam('sysparm_name', 'get_all_contracts_now');
+    scheduled_job_utils_ga.getXML(get_all_contracts_response);
+
+});
+
+// CALLBACK ^ , removes spinner and directs users to app logs
+function get_all_contracts_response(response) {
+	
+    var answer = response.responseXML.documentElement.getAttribute('answer'); // Not using this
+
+    // Reset execute now button
+    jQuery('#loading-spinner').css('display', 'none');
+    jQuery('#get_all_contracts_btn').text('Execute Now');
+    jQuery('#loading-spinner').remove();
+    jQuery('.loading-asset-data-message').css('display', 'block');
+	
+}
+
+// Update get all contracts schedule
+jQuery('#save-contract-schedule').click(function() {
+	
+    event.preventDefault();
+	
+    var scheduled_job_utils_ga = new GlideAjax('Lenovo_Scheduled_Job_Utils');
+	
+	scheduled_job_utils_ga.addParam('sysparm_name', 'update_get_all_contract_schedule');
+	scheduled_job_utils_ga.addParam('sysparm_run_type', jQuery('#contract-frequency-select').val());
+    scheduled_job_utils_ga.addParam('sysparm_hour', jQuery('#contract-hour').val());
+    scheduled_job_utils_ga.addParam('sysparm_minute', jQuery('#contract-minute').val());
+    scheduled_job_utils_ga.addParam('sysparm_second', jQuery('#contract-second').val());
+    scheduled_job_utils_ga.addParam('sysparm_am_pm', jQuery('#contract-am-pm-select').val());
+	scheduled_job_utils_ga.addParam('sysparm_active', jQuery('#active-checkbox-contract').prop('checked'));
+	
+	if(jQuery('#contract-frequency-select').val() == 'monthy'){
+		scheduled_job_utils_ga.addParam('sysparm_run_day', jQuery('#contract-month-day-select').val());
+	} else if(jQuery('#contract-frequency-select').val() == 'weekly') {
+		scheduled_job_utils_ga.addParam('sysparm_run_day', jQuery('#contract-day-select').val());   	
+	}
+	
+	scheduled_job_utils_ga.getXML(update_get_all_contracts_response);
+	
+});
+
+// CALLBACK ^, not doing anything, just allowing page to refresh
+function update_get_all_contracts_response(response) {
+	
+    var contractScheduleResponse = response.responseXML.documentElement.getAttribute('answer');
+	
+}
+
+// < =========================================== Form Logic ========================================== >
+
+// Show different dropdowns on schedule select depending on the contract retrieval frequency
+jQuery('#contract-frequency-select').change(function() {
+	
+    if (jQuery('#contract-frequency-select').val() == 'daily') {
+        jQuery('.contract-day').css('display', 'none');
+        jQuery('.contract-month-day').css('display', 'none');
+    } else if (jQuery('#contract-frequency-select').val() == 'weekly') {
+        jQuery('.contract-day').css('display', 'block');
+        jQuery('.contract-month-day').css('display', 'none');
+    } else if (jQuery('#contract-frequency-select').val() == 'monthly') {
+        jQuery('.contract-day').css('display', 'none');
+        jQuery('.contract-month-day').css('display', 'block');
+    }
+	
+});
+
+// Toggle scheduled contract retrieval active state when clicked on
+jQuery("#active-checkbox-contract").click(function() {
+	
+    if (jQuery("#active-checkbox-contract").is(':checked')) {
+        jQuery("#active-checkbox-contract").attr('value', true);
+    } else {
+        jQuery("#active-checkbox-contract").attr('value', false);
+    }
+	
+});]]></client_script>
+        <description>Main UI Page for Lenovo Warranty Import allowing user to configure the app.  Accessed through the settings modal.</description>
+        <direct>false</direct>
+        <endpoint>x_500374_leno_warr_settings.do</endpoint>
+        <html><![CDATA[<?xml version="1.0" encoding="utf-8" ?>
+<j:jelly trim="false" xmlns:j="jelly:core" xmlns:g="glide" xmlns:j2="null" xmlns:g2="null">
+
+    <head>
+        <!-- Bootsrap -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+            integrity="sha384- ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+            crossorigin="anonymous">
+		</link>
+		
+		<!-- Font awesome -->
+		<script src="https://kit.fontawesome.com/a6b2a7d0b2.js" crossorigin="anonymous"></script>
+    </head>
+
+    <style>
+		
+		<!-- ====================== Global Styles ====================== -->	
+        body {
+            font-family: helvetica;
+        }
+
+        label {
+            font-size: 18px;
+        }
+
+        input,
+        .form-control,
+        button {
+            border-radius: 3px !important;
+        }
+
+        p {
+            font-size: 13px;
+        }
+				
+		#loading-spinner{
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+		
+		.checkbox label {
+            min-height: 21px;
+            padding-left: 20px;
+            margin-bottom: 0;
+            font-weight: normal;
+            cursor: pointer;
+            line-height: 22px;
+        }
+
+        .c-checkbox span {
+            position: relative;
+            display: inline-block;
+            vertical-align: top;
+			height: 20px;
+            width: 20px;
+            border-radius: 2px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+
+        .c-checkbox span:before {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            opacity: 0;
+            text-align: center !important;
+            font-size: 12px;
+            line-height: 18px;
+            vertical-align: middle;
+        }
+
+        .c-checkbox input[type=checkbox] {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .c-checkbox input[type=checkbox]:checked {
+            color: #fff;
+            transition: color 0.3s ease-out;
+        }
+
+        .c-checkbox input[type=checkbox]:checked+span {
+            border-color: #5d9cec;
+            background-color: #5d9cec;
+        }
+
+        .c-checkbox input[type=checkbox]:checked+span:before {
+            color: #fff;
+            opacity: 1;
+            transition: color 0.3s ease-out;
+        }
+		
+		<!-- ====================== Header Styles ====================== -->	
+		.header {
+            position: relative;
+            top: -5px;
+            padding-top: 3px;
+            padding-bottom: 3px;
+            background-color: #E5E9EB;
+            box-shadow: 0 2px 1px -2px grey;
+        }
+
+		
+		<!-- ====================== API Section Styles ====================== -->
+		#info-api-icon {
+            cursor: pointer;
+            font-size: 11px;
+            position: relative;
+            bottom: 5px;
+            left: 1px;
+        }
+		
+		.api-section{
+			height: 280px;
+		}
+		
+		.api-section-action-buttons{
+			text-align: center;
+		}
+		
+		<!-- ====================== Scheduling Section Styles ====================== -->
+		#info-scheduling-icon {
+            cursor: pointer;
+            font-size: 11px;
+            position: relative;
+            bottom: 5px;
+            left: 1px;
+        }
+	
+		.schedule-section{
+			height: 250px;
+		}
+				
+		.verticle-rule-right-border{
+			border-right: 1px solid rgba(0,0,0,.1);
+		}
+			 
+        .sub-header {
+            background-color: #E5E9EB;
+            padding-top: 3px;
+            padding-bottom: 3px;
+            padding-left: 3vw;
+            padding-right: 3vw;
+            margin-bottom: 1vh;
+            box-shadow: 0 2px 1px -2px grey;
+            border-radius: 2px;
+        }
+
+        .schedule-dropdown {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+		
+		.schedule-form-group{
+			margin-bottom: 25px !important;
+		}
+
+        .contract-month-day {
+            display: none;
+        }
+
+		.loading-asset-data-message {
+            display: none;
+        }
+		
+		.contract-am-pm {
+			display: none;
+		}
+		
+		<!-- ====================== Support Section Styles ====================== -->
+		.support-section{
+			height: 150px;
+			margin-bottom: 50px;
+		}
+		
+		.support-section-hr{
+			display: none;
+		}	
+		
+		<!-- ====================== Responsive Styling ====================== -->
+		@media only screen and (max-width: 991px) {
+		
+			<!-- API Section Syles -->
+			.api-section{
+				height: 265px;
+			}
+		
+			<!-- Scheduling Section Syles -->
+			.schedule-section{
+				height: 423px;
+				margin-bottom: 45px;
+				margin-top: 30px;
+			}
+		
+			.verticle-rule-right-border{
+				border-right: none;
+			}
+		
+			<!-- Support Section Syles -->
+
+			.support-section-hr{
+				display: block;
+			}
+		
+			.support-section{
+				height: 250px;
+			}
+		
+		}
+		
+    </style>
+
+    <!-- Header-->
+    <div class="row header pl-5 pr-5">	
+		
+		<!-- Title -->
+		<div id="col">
+			<div >
+				<h1 class="mx-4 mt-2"><i class="fas fa-cogs pr-3"></i>Lenovo Warranty Input Settings</h1>
+			</div>
+		</div>
+    </div>
+	
+	<!-- ==================================  Main Settings Container  ================================== -->
+	<div class = "container-fluid mt-5">
+		<div class="row settings-row">
+			
+			<!-- ==================================  API Input Area  ================================== -->
+			<div class = "col-12 col-lg-6 api-section verticle-rule-right-border">
+
+				<!-- API Section - Header -->
+				<h2 class="text-center" style="display: block;"><i class="fas fa-unlock-alt pr-3 mb-3"></i>Configuration</h2>
+
+				<!-- API Section - Input Area -->
+				<form class="api-key-form">
+		
+					<div class="row">
+						
+						<!-- Input Area - Label -->
+						<label class="ml-2 mb-3 col-12" for="api-key">Input your Lenovo API Key<span> <i id="info-api-icon" class="fas fa-info-circle"></i></span></label>
+						
+						<!-- Input Area - Text Input -->
+						<div class="col-12">
+							<div class="form-group">
+								<input class="form-control form-control-lg" placeholder="API Key" name="api-key" id="api-key"></input>
+							</div>
+						</div>
+						
+					</div>
+				
+				</form>
+				
+				<!-- API Section - Footer -->
+				<div class="row pl-4 pr-4">
+					
+					<!-- View API keys -->
+					<div class="col-9">
+						<p>View your$[SP]<a href="./x_500374_leno_warr_api_key_list.do">API Key</a>$[SP]</p>
+					</div>
+
+					<!-- Submit API key -->
+					 <div class="col-3">
+						<button id="submit-api-creds"
+							class="btn btn-lg border border-secondary float-right">Submit
+						</button>
+					</div>
+
+				</div> 
+
+				<!-- API Section - Advanced Settings & Resources buttons -->
+				<div class = " mt-4 mb-5">
+
+					<label class="ml-2 mb-3">Advanced Settings &amp; Resources</label>
+					
+					<div class="api-section-action-buttons">
+						<!-- Advanced Settings -->
+						<button id="toggle-advanced-settings" type="button" class="btn btn-lg border border-secondary mr-3 ml-3 ">
+							<i class="fas fa-toolbox pr-2"></i>
+							Advanced Settings
+						</button>
+
+						<!-- KB -->
+						<button id="toggle-kb" type="button" class="btn btn-lg border border-secondary  mr-3 ml-3">
+							<i class="fas fa-info-circle pr-2"></i>
+							Knowledge Base
+						</button>		
+					</div>
+				</div>
+			
+				 <hr class=" api-section-hr"></hr>
+			
+			</div>
+
+			<!-- ==================================  Scheduled Job Settings  ================================== -->
+			<div class = "col-12 col-lg-6 schedule-section">
+
+					<div class="row">
+						<div class="col-12 ">
+							<h2 class="text-center sub-header"><i class="far fa-clock pr-3"></i>Scheduling</h2>
+						</div>
+					</div>
+
+					<!-- Automated Contract Update Section	-->
+					<div class="row contract-update-section">
+						<div class="col-12">
+							<div class="row">
+								<div class="col-12 text-center">
+									<h3 class="mt-2">Retrieve All Contracts on a Schedule<span>
+											<i id="info-scheduling-icon" class="fas fa-info-circle"></i>
+										</span>
+									</h3>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-12">
+									<p class="text-center mx-auto my-3">Customize Your Schedule Below:</p>
+								</div>
+							</div>
+							
+							<!-- Schedule Section - Form -->
+							<div class="row">
+								<div class="col-12">
+									<form>
+										
+										<!-- Frequency -->
+										<div class="form-group schedule-form-group">
+											<label for="contract-frequency-select">Frequency</label>
+											<select class="form-control form-control-lg"
+												id="contract-frequency-select">
+												<option selected="selected">Select Frequency</option>
+												<option value="daily">Daily</option>
+												<option value="weekly">Weekly</option>
+												<option value="monthly">Monthly</option>
+											</select>
+										</div>
+										
+										<!-- Day -->
+										<div class="form-group schedule-form-group contract-day">
+											<label for="contract-day-select">Day</label>
+											<select class="form-control form-control-lg"
+												id="contract-day-select">
+												<option selected="selected" value="default">Select Day of Week
+												</option>
+												<option value="7">Sunday</option>
+												<option value="1">Monday</option>
+												<option value="2">Tuesday</option>
+												<option value="3">Wednesday</option>
+												<option value="4">Thursday</option>
+												<option value="5">Friday</option>
+												<option value="6">Saturday</option>
+											</select>
+										</div>
+										
+										<!-- Month -->
+										<div class="form-group schedule-form-group contract-month-day">
+											<label for="contract-month-day-select">Day</label>
+											<select class="form-control form-control-lg"
+												id="contract-month-day-select">
+												<option selected="selected" value="default">Select Day of Month
+												</option>
+												<option value="1">1</option>
+												<option value="2">2</option>
+												<option value="3">3</option>
+												<option value="4">4</option>
+												<option value="5">5</option>
+												<option value="6">6</option>
+												<option value="7">7</option>
+												<option value="8">8</option>
+												<option value="9">9</option>
+												<option value="10">10</option>
+												<option value="11">11</option>
+												<option value="12">12</option>
+												<option value="13">13</option>
+												<option value="14">14</option>
+												<option value="15">15</option>
+												<option value="16">16</option>
+												<option value="17">17</option>
+												<option value="18">18</option>
+												<option value="19">19</option>
+												<option value="20">20</option>
+												<option value="21">21</option>
+												<option value="22">22</option>
+												<option value="23">23</option>
+												<option value="24">24</option>
+												<option value="25">25</option>
+												<option value="26">26</option>
+												<option value="27">27</option>
+												<option value="28">28</option>
+												<option value="29">29</option>
+												<option value="30">30</option>
+												<option value="31">31</option>
+											</select>
+										</div>
+										
+										<!-- Time -->
+										<div class = "form-group schedule-form-group">
+											<div class = "row">
+												<div class="col-12 mb-0">
+													<label >
+														<span id="schedule-label"></span>
+														<span id = "time-format"></span>
+														<span id="session-time-zone"></span>
+													</label>
+												</div>
+											</div>
+
+											<div class="row">
+												<div class="col" data-toggle="tooltip" data-placement="top"
+													title="Hour">
+													<input id="contract-hour" type="text"
+														class="form-control form-control-lg"
+														placeholder="00"></input>
+												</div>
+
+												<div class="col" data-toggle="tooltip" data-placement="top"
+													title="Minute">
+													<input id="contract-minute" type="text"
+														class="form-control form-control-lg"
+														placeholder="00"></input>
+												</div>
+												
+												<div class="col" data-toggle="tooltip" data-placement="top"
+													title="Second">
+													<input id="contract-second" type="text"
+														class="form-control form-control-lg"
+														placeholder="00"></input>
+												</div>
+												
+												<div class="col contract-am-pm" data-toggle="tooltip" data-placement="top" title="AM/PM">
+													<select class="form-control form-control-lg" id="contract-am-pm-select">
+														<option selected="selected" value="AM">AM</option>
+														<option value="PM">PM</option>
+													</select>
+												</div>
+												
+											</div>
+										</div>
+									</form>
+								</div>
+							</div>
+
+							<!-- Activating, Saving and Execute Now Section -->
+							<div class="row mt-5">
+
+								<div class="col-6">
+									<form class="form-inline">
+										<div class="checkbox c-checkbox mr-3">
+											<label for="active-checkbox-contract" id="checkbox-label">
+												<input type="checkbox" id="active-checkbox-contract" />
+												<span class="fa fa-check mr-2"></span>
+												Active
+											</label>
+										</div>
+										<button id="save-contract-schedule" type="button"
+											class="btn btn-lg border border-secondary">
+											Save Settings
+										</button>
+									</form>
+								</div>
+								
+								<div class="col-6 ">
+									<div class="contract-schedule-button-group">
+										<button id="get_all_contracts_btn"
+											class="btn btn-lg btn-secondary float-right"
+											type="button">Execute Now</button>
+									</div>
+								</div>
+		
+							</div>
+							
+							<div class="row">
+								<div class="col-12 mt-3">
+									<p class="loading-asset-data-message text-right">Processing contracts in the background, please check$[SP]<a href="./x_500374_leno_warr_logs_list.do">Logs</a>$[SP]for progress.
+									</p>
+								</div>
+							</div>
+						</div>
+					</div>
+
+			</div>
+
+			<!-- ==================================  Support Area  ================================== -->			
+			<div class="col-12 col-lg-6 support-section verticle-rule-right-border">
+				
+				<hr class=" support-section-hr mb-5"></hr>
+				
+				<!-- Support Section - Header -->
+				<div class="row">
+					<div class="col-md-12 mb-4">
+						<h2 class="text-center mb-3"><i
+								class="far fa-question-circle pr-3"></i>Support</h2>
+						<p class="text-center">If you need any assistance go through one of the following channels:</p>
+					</div>
+				</div>
+				
+				<!-- Support Section - Contact Info -->
+				<div class="row text-center">
+					
+					<!-- Website Link -->
+					<div class="col-6">
+						<strong>
+							<p>On the Web</p>
+						</strong>
+						<p >
+							<a id ="blog-redirect" href="#">www.by-daniel.com</a>
+						</p>
+					</div>
+					
+					<!-- Email -->
+					<div class="col-6">
+						<strong>
+							<p>By Email</p>
+						</strong>
+						<p>need.any.type.of.help@outlook.com</p>
+					</div>
+
+				</div>
+			</div>
+
+		</div>
+	</div>		
+</j:jelly>]]></html>
+        <name>settings</name>
+        <processing_script/>
+        <sys_class_name>sys_ui_page</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2021-02-01 21:31:12</sys_created_on>
+        <sys_id>e5386082078220103af7f2ae7c1ed086</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>settings</sys_name>
+        <sys_package display_value="Lenovo Warranty Import" source="x_500374_leno_warr">abde5c0e074220103af7f2ae7c1ed08c</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Lenovo Warranty Import">abde5c0e074220103af7f2ae7c1ed08c</sys_scope>
+        <sys_update_name>sys_ui_page_e5386082078220103af7f2ae7c1ed086</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2021-02-01 21:31:12</sys_updated_on>
+    </sys_ui_page>
+</record_update>
