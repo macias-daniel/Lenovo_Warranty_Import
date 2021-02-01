@@ -113,16 +113,21 @@ Lenovo_App_Utils.prototype = Object.extendsObject(global.AbstractAjaxProcessor, 
 
 		////////////////////////////////////////// Retrieval of settings ////////////////////////////////////////////
         // Query and create variables storing file active states
-        if (ui_action_gr.get('c81e96160721a0103af7f2ae7c1ed049'))
+		
+		// Get contract
+        if (ui_action_gr.get('fe2fa44a078220103af7f2ae7c1ed0a4'))
             get_contract = ui_action_gr.getValue('active');
 
-        if (business_rule_gr.get('57221e1e07ed60103af7f2ae7c1ed01e'))
+		// Get new asset contract
+        if (business_rule_gr.get('a892340e078220103af7f2ae7c1ed08f'))
             get_new_asset_contract = business_rule_gr.getValue('active');
 
-        if (business_rule_gr.get('74d2da1e07ed60103af7f2ae7c1ed011'))
+		// Get udpated asset contract
+        if (business_rule_gr.get('f023380e078220103af7f2ae7c1ed05b'))
             get_updated_asset_contract = business_rule_gr.getValue('active');
 
-        if (scheduled_email_gr.get('9865de0c07c220103af7f2ae7c1ed013')) {
+		// Scheduled email of report
+        if (scheduled_email_gr.get('7cdfec4a078220103af7f2ae7c1ed06c')) {
             expiring_contracts_notification = scheduled_email_gr.getValue('active');
 
             // In addition to the active state, get the current list (address_list) of notification contacts to display to user
@@ -130,10 +135,13 @@ Lenovo_App_Utils.prototype = Object.extendsObject(global.AbstractAjaxProcessor, 
         }
 
         // Query and create variables storing system property values
-        if (system_properties_gr.get('b29062960721a0103af7f2ae7c1ed07e'))
+		
+		// Logging type
+        if (system_properties_gr.get('7840348a078220103af7f2ae7c1ed0aa'))
             logging_type = system_properties_gr.getValue('value');
 
-        if (system_properties_gr.get('21f02a960721a0103af7f2ae7c1ed0db'))
+		// Truncate logs value
+        if (system_properties_gr.get('8c8134ca078220103af7f2ae7c1ed046'))
             truncate_logs_value = system_properties_gr.getValue('value');
 
         // Put currently stored settings in current_settings object to pass back to client
@@ -179,22 +187,27 @@ Lenovo_App_Utils.prototype = Object.extendsObject(global.AbstractAjaxProcessor, 
         // Using GlideRecord Objects retrieve files
         // set active states of files using variables declared above
         // and update files
-        if (ui_action_gr.get('c81e96160721a0103af7f2ae7c1ed049')) {
+		
+		// Get contract
+        if (ui_action_gr.get('fe2fa44a078220103af7f2ae7c1ed0a4')) {
             ui_action_gr.setValue('active', get_contract);
             ui_action_gr.update();
         }
-
-        if (business_rule_gr.get('57221e1e07ed60103af7f2ae7c1ed01e')) {
+		
+		// Get new asset contract
+        if (business_rule_gr.get('a892340e078220103af7f2ae7c1ed08f')) {
             business_rule_gr.setValue('active', get_new_asset_contract);
             business_rule_gr.update();
         }
 
-        if (business_rule_gr.get('74d2da1e07ed60103af7f2ae7c1ed011')) {
+		// Get updated asset contract
+        if (business_rule_gr.get('f023380e078220103af7f2ae7c1ed05b')) {
             business_rule_gr.setValue('active', get_updated_asset_contract);
             business_rule_gr.update();
         }
 
-        if (scheduled_email_gr.get('9865de0c07c220103af7f2ae7c1ed013')) {
+		// Scheduled email of report
+        if (scheduled_email_gr.get('7cdfec4a078220103af7f2ae7c1ed06c')) {
             scheduled_email_gr.setValue('active', expiring_contracts_notification);
 
             // In adition to active state set the address_list field using emails inputted by the user
@@ -206,12 +219,15 @@ Lenovo_App_Utils.prototype = Object.extendsObject(global.AbstractAjaxProcessor, 
         // Using GlideRecord Objects retrieve system parameters
         // set value states of system parameters using variables declared above
         // and update system parameters
-        if (system_properties_gr.get('b29062960721a0103af7f2ae7c1ed07e')) {
+		
+		// Logging Type
+        if (system_properties_gr.get('7840348a078220103af7f2ae7c1ed0aa')) {
             system_properties_gr.setValue('value', logging_type);
             system_properties_gr.update();
         }
-
-        if (system_properties_gr.get('21f02a960721a0103af7f2ae7c1ed0db')) {
+	
+		// Truncate logs value
+        if (system_properties_gr.get('8c8134ca078220103af7f2ae7c1ed046')) {
             system_properties_gr.setValue('value', truncate_logs_value);
             system_properties_gr.update();
         }
@@ -313,13 +329,13 @@ Lenovo_App_Utils.prototype = Object.extendsObject(global.AbstractAjaxProcessor, 
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2021-02-01 21:54:09</sys_created_on>
         <sys_id>49bda086078220103af7f2ae7c1ed001</sys_id>
-        <sys_mod_count>0</sys_mod_count>
+        <sys_mod_count>2</sys_mod_count>
         <sys_name>Lenovo_App_Utils</sys_name>
         <sys_package display_value="Lenovo Warranty Import" source="x_500374_leno_warr">abde5c0e074220103af7f2ae7c1ed08c</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Lenovo Warranty Import">abde5c0e074220103af7f2ae7c1ed08c</sys_scope>
         <sys_update_name>sys_script_include_49bda086078220103af7f2ae7c1ed001</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2021-02-01 21:54:09</sys_updated_on>
+        <sys_updated_on>2021-02-01 22:32:23</sys_updated_on>
     </sys_script_include>
 </record_update>
