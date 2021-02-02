@@ -10,7 +10,7 @@ Lenovo Warranty Import allows any organization to gain immediate control of thei
 
 ## Scheduled Contract Retrieval
 
-<div style="text-align:center"><img src= "./readme_assets/contract_retrieval_schedule.png" alt= "Scheduled Contract Retrieval" width="500px"></div>
+<div align = 'center'><img src= "./readme_assets/contract_retrieval_schedule.png" alt= "Scheduled Contract Retrieval" width="500px"></div>
 
 - Selecting a schedule to update all your contracts is super simple and takes no more than 2 minutes to set up! Or, if you are impatient like most of us, you can also update all your asset contracts right away!
 
