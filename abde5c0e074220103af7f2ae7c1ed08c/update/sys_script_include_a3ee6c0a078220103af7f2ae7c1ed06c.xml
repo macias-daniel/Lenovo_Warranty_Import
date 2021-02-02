@@ -100,11 +100,11 @@ Lenovo_Scheduled_Job_Utils.prototype = Object.extendsObject(global.AbstractAjaxP
             return JSON.stringify(data);
         }
     },
-	
-	// Update get all contracts (scheduled script execution) schedule using values passed by user
-	update_get_all_contract_schedule: function(){
-		var app_utils = new Lenovo_App_Utils;
-		
+
+    // Update get all contracts (scheduled script execution) schedule using values passed by user
+    update_get_all_contract_schedule: function() {
+        var app_utils = new Lenovo_App_Utils;
+
         // Define variables
         var frequency = this.getParameter("sysparm_run_type");
         var hour = this.getParameter("sysparm_hour");
@@ -116,16 +116,16 @@ Lenovo_Scheduled_Job_Utils.prototype = Object.extendsObject(global.AbstractAjaxP
         var time_format = gs.getProperty('glide.sys.time_format');
         var run_time;
 
-		
-		app_utils.function_log('Lenovo_Scheduled_Job_Utils', 'update_get_all_contracts_schedule');
-		
-        if (frequency == 'default') {  // If frequnecy hasn't been specified error out
+
+        app_utils.function_log('Lenovo_Scheduled_Job_Utils', 'update_get_all_contracts_schedule');
+
+        if (frequency == 'default') { // If frequnecy hasn't been specified error out
             gs.addErrorMessage('Please specify a "Frequency" in your contract schedule before saving.');
             return;
-        } else if ((run_day) && run_day == 'default') {  // If run day hasn't been specified by user error out
+        } else if ((run_day) && run_day == 'default') { // If run day hasn't been specified by user error out
             gs.addErrorMessage('Please specifiy a "Day" in your contract schedule before saving.');
             return;
-        } else if (time_format == 'hh:mm:ss a' || time_format == 'hh.mm.ss a') {  // If time format is standard, ensure time is correct or error out
+        } else if (time_format == 'hh:mm:ss a' || time_format == 'hh.mm.ss a') { // If time format is standard, ensure time is correct or error out
             if ((hour < 0 || hour > 12 || hour == '') || (minute < 0 || minute >= 60 || minute == '') || (second < 0 || second >= 60 || second == '')) {
                 gs.addErrorMessage('Please specifiy a correct "Time" in your contract schedule before saving.');
                 return;
@@ -174,8 +174,15 @@ Lenovo_Scheduled_Job_Utils.prototype = Object.extendsObject(global.AbstractAjaxP
             }
             scheduled_job_gr.setValue('run_time', run_timeUTC);
             scheduled_job_gr.setValue('run_type', frequency);
-			
-            scheduled_job_gr.setValue('active', active);
+
+			// When false is retrieved from client through sys_parm,
+			// active is empty, using the following if statement to get arround that
+            if (active) {
+                scheduled_job_gr.setValue('active', true);
+            } else {
+                scheduled_job_gr.setValue('active', false);
+            }
+
 
             // Update schedule
             scheduled_job_gr.update();
@@ -185,10 +192,10 @@ Lenovo_Scheduled_Job_Utils.prototype = Object.extendsObject(global.AbstractAjaxP
         }
 
         return;
-	},
-	
-	// execute scheduled get all contracts (Scheduled Script Execution) immediately via Scheduled script execution (so that it runs on a async thread)
-    get_all_contracts_now: function() { 
+    },
+
+    // execute scheduled get all contracts (Scheduled Script Execution) immediately via Scheduled script execution (so that it runs on a async thread)
+    get_all_contracts_now: function() {
         // Create reference to appUtils
         var app_utils = new Lenovo_App_Utils;
 
@@ -197,7 +204,7 @@ Lenovo_Scheduled_Job_Utils.prototype = Object.extendsObject(global.AbstractAjaxP
         // Grab GR from sript table
         var scheduled_job_gr = new GlideRecord('sysauto_script');
 
-		// Scheduled Get all contracts
+        // Scheduled Get all contracts
         if (scheduled_job_gr.get('3632300e078220103af7f2ae7c1ed021')) {
             scheduled_job_gr.query();
 
@@ -208,8 +215,8 @@ Lenovo_Scheduled_Job_Utils.prototype = Object.extendsObject(global.AbstractAjaxP
 
         return;
     },
-	
-	// Refresh time zone of chosen scheduled job script
+
+    // Refresh time zone of chosen scheduled job script
     refresh_schedule_time_zone: function(scheduled_job_table, scheduled_job_sys_id, minute) {
 
         var schedule_table_gr = new GlideRecord(scheduled_job_table);
@@ -242,7 +249,7 @@ Lenovo_Scheduled_Job_Utils.prototype = Object.extendsObject(global.AbstractAjaxP
 
             return true;
         }
-		
+
     },
 
     type: 'Lenovo_Scheduled_Job_Utils'
@@ -251,13 +258,13 @@ Lenovo_Scheduled_Job_Utils.prototype = Object.extendsObject(global.AbstractAjaxP
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2021-02-01 22:00:03</sys_created_on>
         <sys_id>a3ee6c0a078220103af7f2ae7c1ed06c</sys_id>
-        <sys_mod_count>5</sys_mod_count>
+        <sys_mod_count>6</sys_mod_count>
         <sys_name>Lenovo_Scheduled_Job_Utils</sys_name>
         <sys_package display_value="Lenovo Warranty Import" source="x_500374_leno_warr">abde5c0e074220103af7f2ae7c1ed08c</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Lenovo Warranty Import">abde5c0e074220103af7f2ae7c1ed08c</sys_scope>
         <sys_update_name>sys_script_include_a3ee6c0a078220103af7f2ae7c1ed06c</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2021-02-02 22:23:57</sys_updated_on>
+        <sys_updated_on>2021-02-02 22:27:37</sys_updated_on>
     </sys_script_include>
 </record_update>
