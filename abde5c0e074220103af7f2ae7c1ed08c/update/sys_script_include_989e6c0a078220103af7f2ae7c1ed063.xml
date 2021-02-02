@@ -52,6 +52,7 @@ Lenovo_Contract_Utils.prototype = Object.extendsObject(global.AbstractAjaxProces
         asset_gr.query();
         if (asset_gr.next()) {
             asset_sys_id = asset_gr.sys_id; // Get and store assets sys_id
+			gs.info(asset_gr.model.name);
             if (asset_gr.model.manufacturer.name.indexOf('Lenovo') < 0) {
                 app_utils.create_log('Lenovo is not set as the manufacturer of this hardware asset, please add Lenovo as the Manufacturer and then try the "Get Contract" action again.', 'Error');
                 gs.addErrorMessage('Lenovo is not set as the manufacturer of this hardware asset, please add Lenovo as the Manufacturer and then try the "Get Contract" action again.');
@@ -164,13 +165,13 @@ Lenovo_Contract_Utils.prototype = Object.extendsObject(global.AbstractAjaxProces
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2021-02-01 21:59:07</sys_created_on>
         <sys_id>989e6c0a078220103af7f2ae7c1ed063</sys_id>
-        <sys_mod_count>0</sys_mod_count>
+        <sys_mod_count>6</sys_mod_count>
         <sys_name>Lenovo_Contract_Utils</sys_name>
         <sys_package display_value="Lenovo Warranty Import" source="x_500374_leno_warr">abde5c0e074220103af7f2ae7c1ed08c</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Lenovo Warranty Import">abde5c0e074220103af7f2ae7c1ed08c</sys_scope>
         <sys_update_name>sys_script_include_989e6c0a078220103af7f2ae7c1ed063</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2021-02-01 21:59:07</sys_updated_on>
+        <sys_updated_on>2021-02-01 22:58:52</sys_updated_on>
     </sys_script_include>
 </record_update>
