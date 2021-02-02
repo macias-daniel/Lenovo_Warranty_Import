@@ -7,7 +7,7 @@
         <entered_time>1970-01-01 00:00:00</entered_time>
         <name>Refresh Scheduled Job Time Zone</name>
         <offset/>
-        <offset_type>0</offset_type>
+        <offset_type/>
         <run_as display_value="System Administrator">6816f79cc0a8016401c5a33be04be441</run_as>
         <run_as_tz/>
         <run_dayofmonth>1</run_dayofmonth>
@@ -22,22 +22,22 @@ var scheduled_job_utils = new Lenovo_Scheduled_Job_Utils;
 
 app_utils.function_log('Scheduled Script Execution', 'Refresh Scheduled Job Time Zone');
 
-scheduled_job_utils.refresh_schedule_time_zone('sysauto_script','dba12f7d076d20103af7f2ae7c1ed0b6', '10'); // Log Maintenance
-scheduled_job_utils.refresh_schedule_time_zone('sysauto_report','f08c5661076120103af7f2ae7c1ed002', '20'); // Expiring Contracts Notification
+scheduled_job_utils.refresh_schedule_time_zone('sysauto_script','d1027cca078220103af7f2ae7c1ed0d2', '10'); // Log Maintenance
+scheduled_job_utils.refresh_schedule_time_zone('sysauto_report','7cdfec4a078220103af7f2ae7c1ed06c', '20'); // Expiring Contracts Notification
 
 ]]></script>
         <sys_class_name>sysauto_script</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2021-02-01 22:13:28</sys_created_on>
         <sys_id>4422b4ca078220103af7f2ae7c1ed034</sys_id>
-        <sys_mod_count>0</sys_mod_count>
+        <sys_mod_count>1</sys_mod_count>
         <sys_name>Refresh Scheduled Job Time Zone</sys_name>
         <sys_package display_value="Lenovo Warranty Import" source="x_500374_leno_warr">abde5c0e074220103af7f2ae7c1ed08c</sys_package>
         <sys_policy/>
         <sys_scope display_value="Lenovo Warranty Import">abde5c0e074220103af7f2ae7c1ed08c</sys_scope>
         <sys_update_name>sysauto_script_4422b4ca078220103af7f2ae7c1ed034</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2021-02-01 22:13:28</sys_updated_on>
+        <sys_updated_on>2021-02-02 20:00:30</sys_updated_on>
         <time_zone/>
         <upgrade_safe>false</upgrade_safe>
     </sysauto_script>

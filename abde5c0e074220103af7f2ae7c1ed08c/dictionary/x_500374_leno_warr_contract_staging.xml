@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><database>
-    <element extends="sys_import_set_row" label="Lenovo Contract Staging" max_length="40" name="x_500374_leno_warr_contract_staging" type="collection">
+    <element extends="sys_import_set_row" label="Lenovo Contract Staging" max_length="40" name="x_500374_leno_warr_contract_staging" sizeclass="0" type="collection">
         <element attributes="edge_encryption_enabled=true" label="Contract Model" max_length="40" name="contract_model" type="string"/>
         <element attributes="edge_encryption_enabled=true" label="Contract State" max_length="40" name="contract_state" type="string"/>
         <element attributes="edge_encryption_enabled=true" label="Description" max_length="1000" name="description" type="string"/>
