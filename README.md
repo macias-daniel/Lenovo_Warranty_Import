@@ -1,5 +1,7 @@
 # What is Lenovo Warranty Import?
 
+[![Version: 1.0.0](https://img.shields.io/badge/-ServiceNow-blue)](https://github.com/macias-daniel/Lenovo_Warranty_Import) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/macias-daniel/Lenovo_Warranty_Import) [![Version: 1.0.0](https://img.shields.io/badge/Version-v1.0.0-brightgreen)](https://github.com/macias-daniel/Lenovo_Warranty_Import) 
+
 Lenovo Warranty Import allows any organization to gain immediate control of their Lenovo hardware contracts by natively bringing in your warranties and leases from Lenovo into ServiceNow, automatically creating those contracts and associating them to their respective hardware assets. 
 
 ## One-Click "Get Contract" Updates
@@ -7,6 +9,8 @@ Lenovo Warranty Import allows any organization to gain immediate control of thei
 - We all know that sometimes in an asset's hardware lifecycle, the latest contract info isn't there; maybe the asset is new, refreshed, or had an upgraded contract recently. Retrieving those contracts ASAP is not an issue anymore by using the "Get Contract"  UI Action available on all Lenovo hardware assets, which brings the ease of grabbing the latest contract details directly to your day to day asset management experience.
 
 ## Scheduled Contract Retrieval
+
+<div style="text-align:center"><img src= "./readme_assets/contract_retrieval_schedule.png" alt= "Scheduled Contract Retrieval" width="500px"></div>
 
 - Selecting a schedule to update all your contracts is super simple and takes no more than 2 minutes to set up! Or, if you are impatient like most of us, you can also update all your asset contracts right away!
 
