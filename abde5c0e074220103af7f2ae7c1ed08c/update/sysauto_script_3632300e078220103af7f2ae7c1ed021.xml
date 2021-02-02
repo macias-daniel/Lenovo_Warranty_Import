@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><record_update table="sysauto_script">
     <sysauto_script action="INSERT_OR_UPDATE">
-        <active>true</active>
+        <active>false</active>
         <business_calendar/>
         <condition/>
         <conditional>false</conditional>
@@ -14,7 +14,7 @@
         <run_dayofweek>1</run_dayofweek>
         <run_period/>
         <run_start>2021-02-01 22:13:39</run_start>
-        <run_time>1970-01-01 08:20:00</run_time>
+        <run_time>1970-01-01 08:59:00</run_time>
         <run_type>monthly</run_type>
         <script><![CDATA[var app_utils = new Lenovo_App_Utils;
 var contract_utils = new Lenovo_Contract_Utils;
@@ -27,14 +27,14 @@ contract_utils.get_all_contracts();
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2021-02-01 22:13:58</sys_created_on>
         <sys_id>3632300e078220103af7f2ae7c1ed021</sys_id>
-        <sys_mod_count>2</sys_mod_count>
+        <sys_mod_count>3</sys_mod_count>
         <sys_name>Scheduled Get All Contracts</sys_name>
         <sys_package display_value="Lenovo Warranty Import" source="x_500374_leno_warr">abde5c0e074220103af7f2ae7c1ed08c</sys_package>
         <sys_policy/>
         <sys_scope display_value="Lenovo Warranty Import">abde5c0e074220103af7f2ae7c1ed08c</sys_scope>
         <sys_update_name>sysauto_script_3632300e078220103af7f2ae7c1ed021</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2021-02-02 01:57:30</sys_updated_on>
+        <sys_updated_on>2021-02-02 03:33:00</sys_updated_on>
         <time_zone/>
         <upgrade_safe>false</upgrade_safe>
     </sysauto_script>
