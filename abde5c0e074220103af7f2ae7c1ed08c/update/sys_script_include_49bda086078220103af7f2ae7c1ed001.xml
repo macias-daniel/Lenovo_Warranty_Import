@@ -315,7 +315,6 @@ Lenovo_App_Utils.prototype = Object.extendsObject(global.AbstractAjaxProcessor, 
 				gs.addErrorMessage('Something went wrong with Lenovo'+"'"+'s Warranty API, please try again later.');
 			}
 
-			gs.info(httpResponseStatus);
             return api_key_added;
         }
     },
@@ -354,13 +353,13 @@ Lenovo_App_Utils.prototype = Object.extendsObject(global.AbstractAjaxProcessor, 
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2021-02-01 21:54:09</sys_created_on>
         <sys_id>49bda086078220103af7f2ae7c1ed001</sys_id>
-        <sys_mod_count>12</sys_mod_count>
+        <sys_mod_count>13</sys_mod_count>
         <sys_name>Lenovo_App_Utils</sys_name>
         <sys_package display_value="Lenovo Warranty Import" source="x_500374_leno_warr">abde5c0e074220103af7f2ae7c1ed08c</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Lenovo Warranty Import">abde5c0e074220103af7f2ae7c1ed08c</sys_scope>
         <sys_update_name>sys_script_include_49bda086078220103af7f2ae7c1ed001</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2021-02-02 02:40:31</sys_updated_on>
+        <sys_updated_on>2021-02-02 02:41:44</sys_updated_on>
     </sys_script_include>
 </record_update>

@@ -7,170 +7,256 @@
         <client_callable>true</client_callable>
         <description>Scipt include to manage contract retrievals</description>
         <name>Lenovo_Scheduled_Job_Utils</name>
-        <script><![CDATA[var Lenovo_Contract_Utils = Class.create();
-Lenovo_Contract_Utils.prototype = Object.extendsObject(global.AbstractAjaxProcessor, {
+        <script><![CDATA[var Lenovo_Scheduled_Job_Utils = Class.create();
+Lenovo_Scheduled_Job_Utils.prototype = Object.extendsObject(global.AbstractAjaxProcessor, {
 
-	// MAIN LOGIC - Get a hardware assets serial number, get its warranty contract and attach it to the asset
-    get_contract: function(asset_serial_num) { 
-
-        ////////////////////////////////////////// Variables ////////////////////////////////////////////
-        // Script include references
+    // Get get all contracts (Scheduled Script execution) schedule and return to client
+    get_get_all_contracts_schedule: function() {
+        // Create reference to appUtils
         var app_utils = new Lenovo_App_Utils;
-        var api_utils = new Lenovo_API_Utils;
-        var contract_processing_utils = new Lenovo_Contract_Processing_Utils;
 
-        // Table references
-        var asset_gr = new GlideRecord('alm_hardware');
+        app_utils.function_log('Lenovo_Scheduled_Job_Utils', 'get_get_all_contracts_schedule');
 
-        // Asset data
-        var serial_num = (asset_serial_num || this.getParameter('sysparm_serial_number')); // The value populated is determined by where get_contract was called from
-        var asset_sys_id;
+        // Grab schedule
+        var scheduled_job_gr = new GlideRecord('sysauto_script');
+        if (scheduled_job_gr.get('3632300e078220103af7f2ae7c1ed021')) { // Query get all contracts schedule
 
-        // API Data
-        var api_key;
+            // Define variables from schedule
+            var type = scheduled_job_gr.getValue('run_type');
+            var time = scheduled_job_gr.getValue('run_time');
+            var active = scheduled_job_gr.getValue('active');
+            var day = 0;
 
-        // Retrieved Contract Data
-        var raw_json;
-        var scrubbed_json;
-        var created_contract;
+            if (type == 'weekly') {
+                day = scheduled_job_gr.getValue('run_dayofweek');
+            } else if (type == 'monthly') {
+                day = scheduled_job_gr.getValue('run_dayofmonth');
+            }
 
-		// Contract retrieval count
-		var success = false;
-		var error = true;
+            var time_format = gs.getProperty('glide.sys.time_format');
+            var standard_time = false;
+            var am_pm = false;
+            var time_array;
+            var hours;
+            var minutes;
+            var seconds;
+            var time_parsed;
 
-        //////////////////////////////////////////// Value Checking/Setting //////////////////////////////////////////
+            var gdt = new GlideDateTime();
+            gdt.setValue(time);
+            var local_gdt = gdt.getDisplayValue();
 
-        app_utils.function_log('Lenovo_Contract_Utils', 'get_contract'); // See Lenovo_App_Utils
+            // Grab session time zone
+            var session_time_zone = gs.getSession().getTimeZoneName();
 
-        if (serial_num == '') { // Check that the asset doesnt have a blank serial number
-            app_utils.create_log('Hardware asset does not have a Serial number, please add a Serial number and then try the "Get Contract" action again.', 'Error');
-            gs.addErrorMessage('Harware asset does not have a Serial number, please add a Serial number and then try the "Get Contract" action again.');
-            return;
+            // Determine time format to set correct time
+            if (time_format == 'hh:mm:ss a') {
+                time_parsed = local_gdt.split(" ");
+                time_array = time_parsed[1].split(':');
+                hours = time_array[0].trim();
+                minutes = time_array[1].trim();
+                seconds = time_array[2].trim();
+                standard_time = true;
+                am_pm = time_parsed[2];
+            } else if (time_format == 'hh.mm.ss a') {
+                standard_time = true;
+                time_parsed = local_gdt.split(" ");
+                time_array = time_parsed[1].split('.');
+                hours = time_array[0].trim();
+                minutes = time_array[1].trim();
+                seconds = time_array[2].trim();
+                standard_time = true;
+                am_pm = time_parsed[2];
+            } else if (time_format == 'HH:mm:ss') {
+                time_parsed = local_gdt.split(" ").pop();
+                time_array = time_parsed.split(':');
+                hours = time_array[0].trim();
+                minutes = time_array[1].trim();
+                seconds = time_array[2].trim();
+            } else if (time_format == 'HH.mm.ss') {
+                time_parsed = local_gdt.split(" ").pop();
+                time_array = time_parsed.split('.');
+                hours = time_array[0].trim();
+                minutes = time_array[1].trim();
+                seconds = time_array[2].trim();
+            }
+
+            // Define object of data from schedule
+            var data = {
+                type: type,
+                time: time,
+                hours: hours,
+                minutes: minutes,
+                seconds: seconds,
+                day: day,
+                session_time_zone: session_time_zone,
+                standard_time: standard_time,
+                am_pm: am_pm,
+                active: active,
+                time_format: time_format
+            };
+
+            // Return object as string
+            return JSON.stringify(data);
         }
+    },
+	
+	// Update get all contracts (scheduled script execution) schedule using values passed by user
+	update_get_all_contract_schedule: function(){
+		var app_utils = new Lenovo_App_Utils;
+		
+        // Define variables
+        var frequency = this.getParameter("sysparm_run_type");
+        var hour = this.getParameter("sysparm_hour");
+        var minute = this.getParameter("sysparm_minute");
+        var second = this.getParameter("sysparm_second");
+        var am_pm = this.getParameter("sysparm_am_pm");
+        var run_day = this.getParameter("sysparm_run_day");
+        var active = this.getParameter("sysparm_active");
+        var time_format = gs.getProperty('glide.sys.time_format');
+        var run_time;
 
-        asset_gr.addEncodedQuery('serial_number=' + serial_num);
-        asset_gr.query();
-        if (asset_gr.next()) {
-            asset_sys_id = asset_gr.sys_id; // Get and store assets sys_id
-            if (asset_gr.model.manufacturer.name.indexOf('Lenovo') < 0) {
-                app_utils.create_log('Lenovo is not set as the manufacturer of this hardware asset, please add Lenovo as the Manufacturer and then try the "Get Contract" action again.', 'Error');
-                gs.addErrorMessage('Lenovo is not set as the manufacturer of this hardware asset, please add Lenovo as the Manufacturer and then try the "Get Contract" action again.');
+		
+		app_utils.function_log('Lenovo_Scheduled_Job_Utils', 'update_get_all_contracts_schedule');
+		
+        if (frequency == 'default') {  // If frequnecy hasn't been specified error out
+            gs.addErrorMessage('Please specify a "Frequency" in your contract schedule before saving.');
+            return;
+        } else if ((run_day) && run_day == 'default') {  // If run day hasn't been specified by user error out
+            gs.addErrorMessage('Please specifiy a "Day" in your contract schedule before saving.');
+            return;
+        } else if (time_format == 'hh:mm:ss a' || time_format == 'hh.mm.ss a') {  // If time format is standard, ensure time is correct or error out
+            if ((hour < 0 || hour > 12 || hour == '') || (minute < 0 || minute > 60 || minute == '') || (second < 0 || second > 60 || second == '')) {
+                gs.addErrorMessage('Please specifiy a correct "Time" in your contract schedule before saving.');
+                return;
+            }
+        } else if (time_format == 'HH:mm:ss' || time_format == 'HH.mm.ss') { // If time format is 24 hour, ensure time is correct or error out	
+            if ((hour < 0 || hour > 24 || hour == '') || (minute < 0 || minute > 60 || minute == '') || (second < 0 || second > 60 || second == '')) {
+                gs.addErrorMessage('Please specifiy a correct "Time" in your contract schedule before saving.');
                 return;
             }
         }
 
-		api_key = app_utils.get_api_key(); // Retrieve api key 
-		if(!api_key){ // If api credentials were not retrieved
-			return;
-		}
+        // Define run_time
+        if (time_format == 'hh:mm:ss a') {
+            run_time = hour + ":" + minute + ":" + second + " " + am_pm;
+        } else if (time_format == 'hh.mm.ss a') {
+            run_time = hour + "." + minute + "." + second + " " + am_pm;
+        } else if (time_format == 'HH:mm:ss') {
+            run_time = hour + ":" + minute + ":" + second;
+        } else if (time_format == 'HH.mm.ss') {
+            run_time = hour + "." + minute + "." + second;
+        }
 
-        ////////////////////////////////////////// Main Life Cycle //////////////////////////////////////////
+        // Create new GT object, set Display Value (session time zone) for object
+        var gt = new GlideTime();
+        gt.setDisplayValue(run_time);
 
-        raw_json = api_utils.get_contract_json(serial_num, api_key); // Get asset's contract and store in raw_json variable
+        // Define new RunTime from GT object, retrieving Get Value (UTC Value of object)
+        var run_timeUTC = gt.getValue();
 
-		if(raw_json.status_code == 200){   // If no errors occured proccess the contract
-            scrubbed_json = contract_processing_utils.scrub_contract_json(raw_json.contract_json);
-            created_contract = contract_processing_utils.create_contract(scrubbed_json, asset_sys_id);
-            contract_processing_utils.assign_contract_to_asset(created_contract, asset_sys_id);
+        // Determine frequency of schedule, weekly or monthly
+        var run_dayOrWeek;
+        switch (frequency) {
+            case 'weekly':
+                run_dayOrWeek = 'run_dayofweek';
+                break;
+            case 'monthly':
+                run_dayOrWeek = 'run_dayofmonth';
+                break;
+        }
 
-			// Settings the variables that will be returned to the client
-            success = true;
-			error = false;
+        // Scheduled get all contracts
+        var scheduled_job_gr = new GlideRecord('sysauto_script');
+        if (scheduled_job_gr.get('3632300e078220103af7f2ae7c1ed021')) {
+            if (frequency == 'weekly' || frequency == 'monthly') {
+                scheduled_job_gr.setValue(run_dayOrWeek, run_day);
+            }
+            scheduled_job_gr.setValue('run_time', run_timeUTC);
+            scheduled_job_gr.setValue('run_type', frequency);
+            scheduled_job_gr.setValue('active', active);
 
-            app_utils.create_log('Contract for asset with serial number: ' + serial_num + ' from Lenovo has completed processing.');
-        } else { // If an error occured when retrieving code
-			app_utils.create_log('Lenovo API Error Message: ' + raw_json.contract_json, 'Error'); // Log server error
-            app_utils.create_log('Could not retrieve contract(s) for asset with serial number: ' + serial_num + ' from Lenovo.', 'Error');
-            gs.addErrorMessage('Could not retrieve contract(s) for asset with serial number: ' + serial_num + ' from Lenovo.');
-		}
-		
-        return JSON.stringify({success: success, error: error}); // Send success and error back to client for processing
-		
-    },
+            // Update schedule
+            scheduled_job_gr.update();
 
-	//Get ALL VALID hardware assets serial numbers, get their warranty contract and attach it to the asset
-    get_all_contracts: function() {
+            // Let the user know the schedule has been updated
+            gs.addInfoMessage("Your contract schedule has been saved.");
+        }
 
-        // Script includes
+        return;
+	},
+	
+	// execute scheduled get all contracts (Scheduled Script Execution) immediately via Scheduled script execution (so that it runs on a async thread)
+    get_all_contracts_now: function() { 
+        // Create reference to appUtils
         var app_utils = new Lenovo_App_Utils;
-        var api_utils = new Lenovo_API_Utils;
-        var contract_processing_utils = new Lenovo_Contract_Processing_Utils;
 
-        // Table references
-        var asset_gr = new GlideRecord('alm_hardware');
+        app_utils.function_log('Lenovo_Scheduled_Job_Utils', 'get_all_contracts_now');
 
-		// Asset data
-		var serial_num;
-		var asset_sys_id;
-		
-		// API Data
-        var api_key;
-		
-		// Various contract states
-		var raw_json;
-		var scrubbed_json;
-		var created_contract;
-		
-		// Contract retrieval count
-		var successes = 0;
-		var errors = 0;
-		
-		// Encoded Queries
-		var encoded_asset_query;
-		
-		//////////////////////////////////////////// Value Checking/Setting //////////////////////////////////////////
-		app_utils.create_log('Get all contracts is now executing');
-		
-		encoded_asset_query = 'serial_numberISNOTEMPTY^model_category.name=Computer^model.manufacturer.nameLIKElenovo';
+        // Grab GR from sript table
+        var scheduled_job_gr = new GlideRecord('sysauto_script');
 
-		api_key = app_utils.get_api_key(); // Retrieve api key 
-		if(!api_key){ // If api credentials were not retrieved
-			return;
-		}
-        asset_gr.addEncodedQuery(encoded_asset_query);
-        asset_gr.query(); // Query for valid hardware assets 
-		
-        //////////////////////////////////////////// Main Life Cycle //////////////////////////////////////////
-        while (asset_gr.next()) { // Loop through every hardware asset individually
-			
-			serial_num = asset_gr.serial_number;
-			asset_sys_id = asset_gr.getUniqueValue();
-			
-            raw_json = api_utils.get_contract_json(serial_num, api_key); // Get asset's contract and store in raw_json variable
-			
-			if(raw_json.status_code == 200){   // If no errors occured proccess the contract
-				scrubbed_json = contract_processing_utils.scrub_contract_json(raw_json.contract_json);
-				created_contract = contract_processing_utils.create_contract(scrubbed_json, asset_sys_id);
-				contract_processing_utils.assign_contract_to_asset(created_contract, asset_sys_id);
+		// Scheduled Get all contracts
+        if (scheduled_job_gr.get('3632300e078220103af7f2ae7c1ed021')) {
+            scheduled_job_gr.query();
 
-                app_utils.create_log('Contract for asset with serial number: ' + serial_num + ' from Lenovo has completed processing.');
-				
-				successes ++;
-            } else { // If an error occured when retrieving code
-				app_utils.create_log('Lenovo API Error Message: ' + raw_json.contract_json, 'Error'); // Log server error
-				app_utils.create_log('Could not retrieve contract(s) for asset with serial number: ' + serial_num + ' from Lenovo.', 'Error');
-				gs.addErrorMessage('Could not retrieve contract(s) for asset with serial number: ' + serial_num + ' from Lenovo.');
+            while (scheduled_job_gr.next()) {
+                gs.executeNow(scheduled_job_gr);
+            }
+        }
 
-				errors++;
-			}
-		}
-		app_utils.create_log('Succeeded in retrieving ' + successes + ' contracts. Errors occured when trying to retrieve ' + errors + ' contracts.');
+        return;
+    },
+	
+	// Refresh time zone of chosen scheduled job script
+    refresh_schedule_time_zone: function(scheduled_job_table, scheduled_job_sys_id, minute) {
+
+        var schedule_table_gr = new GlideRecord(scheduled_job_table);
+        if (schedule_table_gr.get(scheduled_job_sys_id)) {
+            // Create new GT object, set Display Value (session time zone) for object
+            var gt = new GlideTime();
+
+            // Grab time format for SN instance
+            var time_format = gs.getProperty('glide.sys.time_format');
+
+            // Define run_time in appropriate format
+            if (time_format == 'hh:mm:ss a') {
+                gt.setDisplayValue('00:' + minute + ':00 AM');
+            } else if (time_format == 'hh.mm.ss a') {
+                gt.setDisplayValue('00.' + minute + '.00 AM');
+            } else if (time_format == 'HH:mm:ss') {
+                gt.setDisplayValue('00:' + minute + ':00');
+            } else if (time_format == 'HH.mm.ss') {
+                gt.setDisplayValue('00.' + minute + '.00');
+            }
+
+            // Define new RunTime from GT object, retrieving Get Value (UTC Value of object)
+            var run_time = gt.getValue();
+
+            // Set scheduled job value
+            schedule_table_gr.setValue('run_time', run_time);
+
+            // Update schedule
+            schedule_table_gr.update();
+
+            return true;
+        }
 		
     },
 
-    type: 'Lenovo_Contract_Utils'
+    type: 'Lenovo_Scheduled_Job_Utils'
 });]]></script>
         <sys_class_name>sys_script_include</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2021-02-01 22:00:03</sys_created_on>
         <sys_id>a3ee6c0a078220103af7f2ae7c1ed06c</sys_id>
-        <sys_mod_count>0</sys_mod_count>
+        <sys_mod_count>2</sys_mod_count>
         <sys_name>Lenovo_Scheduled_Job_Utils</sys_name>
         <sys_package display_value="Lenovo Warranty Import" source="x_500374_leno_warr">abde5c0e074220103af7f2ae7c1ed08c</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Lenovo Warranty Import">abde5c0e074220103af7f2ae7c1ed08c</sys_scope>
         <sys_update_name>sys_script_include_a3ee6c0a078220103af7f2ae7c1ed06c</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2021-02-01 22:00:03</sys_updated_on>
+        <sys_updated_on>2021-02-02 02:52:19</sys_updated_on>
     </sys_script_include>
 </record_update>
