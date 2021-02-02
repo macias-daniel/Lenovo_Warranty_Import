@@ -30,7 +30,7 @@ Lenovo_App_Utils.prototype = Object.extendsObject(global.AbstractAjaxProcessor, 
 
     // Function logs depending on logging_type system property
     function_log: function(function_location, function_name) {
-		
+
         var logging_type = gs.getProperty('x_500374_leno_warr.logging_type');
 
         //  Depending on the logging type, log things to different places
@@ -50,7 +50,7 @@ Lenovo_App_Utils.prototype = Object.extendsObject(global.AbstractAjaxProcessor, 
 
         this.function_log('Lenovo_App_Utils', 'Truncate_Logs');
 
-		////////////////////////////////////////// Variables ////////////////////////////////////////////
+        ////////////////////////////////////////// Variables ////////////////////////////////////////////
         // Glide records
         var log_gr = new GlideRecord('x_500374_leno_warr_logs');
         var system_properties_gr = new GlideRecord('sys_properties');
@@ -61,7 +61,7 @@ Lenovo_App_Utils.prototype = Object.extendsObject(global.AbstractAjaxProcessor, 
         // Encoded queries
         var encoded_logs_query;
 
-		////////////////////////////////////////// Truncating of logs ////////////////////////////////////////////
+        ////////////////////////////////////////// Truncating of logs ////////////////////////////////////////////
         // Query and store System Property - trucate_logs_value
         if (system_properties_gr.get('21f02a960721a0103af7f2ae7c1ed0db'))
             truncate_logs_value = system_properties_gr.getValue('value');
@@ -85,12 +85,12 @@ Lenovo_App_Utils.prototype = Object.extendsObject(global.AbstractAjaxProcessor, 
 
     // < =============================================== App Setting ===============================================>
 
-    //get settings for advanced settings modal and return it to the caller
+    //retrieve various currently set configurations for advanced settings modal 
     get_settings: function() {
-	
+
         this.function_log('Lenovo_App_Utils', 'get_settings');
 
-		////////////////////////////////////////// Variables ////////////////////////////////////////////
+        ////////////////////////////////////////// Variables ////////////////////////////////////////////
         // Get the users instance ID
         var instance_id = gs.getProperty('instance_id');
 
@@ -111,22 +111,22 @@ Lenovo_App_Utils.prototype = Object.extendsObject(global.AbstractAjaxProcessor, 
 
         var settings; // Object to return back
 
-		////////////////////////////////////////// Retrieval of settings ////////////////////////////////////////////
+        ////////////////////////////////////////// Retrieval of settings ////////////////////////////////////////////
         // Query and create variables storing file active states
-		
-		// Get contract
+
+        // Get contract
         if (ui_action_gr.get('fe2fa44a078220103af7f2ae7c1ed0a4'))
             get_contract = ui_action_gr.getValue('active');
 
-		// Get new asset contract
+        // Get new asset contract
         if (business_rule_gr.get('a892340e078220103af7f2ae7c1ed08f'))
             get_new_asset_contract = business_rule_gr.getValue('active');
 
-		// Get udpated asset contract
+        // Get udpated asset contract
         if (business_rule_gr.get('f023380e078220103af7f2ae7c1ed05b'))
             get_updated_asset_contract = business_rule_gr.getValue('active');
 
-		// Scheduled email of report
+        // Scheduled email of report
         if (scheduled_email_gr.get('7cdfec4a078220103af7f2ae7c1ed06c')) {
             expiring_contracts_notification = scheduled_email_gr.getValue('active');
 
@@ -135,12 +135,12 @@ Lenovo_App_Utils.prototype = Object.extendsObject(global.AbstractAjaxProcessor, 
         }
 
         // Query and create variables storing system property values
-		
-		// Logging type
+
+        // Logging type
         if (system_properties_gr.get('7840348a078220103af7f2ae7c1ed0aa'))
             logging_type = system_properties_gr.getValue('value');
 
-		// Truncate logs value
+        // Truncate logs value
         if (system_properties_gr.get('8c8134ca078220103af7f2ae7c1ed046'))
             truncate_logs_value = system_properties_gr.getValue('value');
 
@@ -160,12 +160,12 @@ Lenovo_App_Utils.prototype = Object.extendsObject(global.AbstractAjaxProcessor, 
 
     },
 
-    //get settings on advanced settings modal and update values accordingly
+    // using settings retrieved in the advanced settings modal, set various business rule, ui action, system parameter and report configuration options
     save_settings: function() {
 
         this.function_log('Lenovo_App_Utils', 'save_settings');
-		
-		////////////////////////////////////////// Variables ////////////////////////////////////////////
+
+        ////////////////////////////////////////// Variables ////////////////////////////////////////////
         // Declaring variables for newly saved file active states
         var get_contract = this.getParameter("sysparm_get_contract");
         var get_new_asset_contract = this.getParameter("sysparm_get_new_asset_contract");
@@ -182,33 +182,58 @@ Lenovo_App_Utils.prototype = Object.extendsObject(global.AbstractAjaxProcessor, 
         var business_rule_gr = new GlideRecord("sys_script");
         var scheduled_email_gr = new GlideRecord("sysauto_report");
         var system_properties_gr = new GlideRecord("sys_properties");
-		
-		////////////////////////////////////////// Value settings ////////////////////////////////////////////
+
+        ////////////////////////////////////////// Setting Values ////////////////////////////////////////////
         // Using GlideRecord Objects retrieve files
         // set active states of files using variables declared above
         // and update files
-		
-		// Get contract
+
+        // **** When data retrieved from client == false, data is seen as null.
+        // **** Adding if statements based on the data's value to define active state
+        // Get contract
         if (ui_action_gr.get('fe2fa44a078220103af7f2ae7c1ed0a4')) {
-            ui_action_gr.setValue('active', get_contract);
+            // ****
+            if (get_contract) {
+                ui_action_gr.setValue('active', true);
+            } else {
+                ui_action_gr.setValue('active', false);
+            }
+
             ui_action_gr.update();
         }
-		
-		// Get new asset contract
+
+        // Get new asset contract
         if (business_rule_gr.get('a892340e078220103af7f2ae7c1ed08f')) {
-            business_rule_gr.setValue('active', get_new_asset_contract);
+            // ****
+            if (get_new_asset_contract) {
+                business_rule_gr.setValue('active', true);
+            } else {
+                business_rule_gr.setValue('active', false);
+            }
+
             business_rule_gr.update();
         }
 
-		// Get updated asset contract
+        // Get updated asset contract
         if (business_rule_gr.get('f023380e078220103af7f2ae7c1ed05b')) {
-            business_rule_gr.setValue('active', get_updated_asset_contract);
+            // ****
+            if (get_updated_asset_contract) {
+                business_rule_gr.setValue('active', true);
+            } else {
+                business_rule_gr.setValue('active', false);
+            }
+
             business_rule_gr.update();
         }
 
-		// Scheduled email of report
+        // Scheduled email of report
         if (scheduled_email_gr.get('7cdfec4a078220103af7f2ae7c1ed06c')) {
-            scheduled_email_gr.setValue('active', expiring_contracts_notification);
+            // ****
+            if (expiring_contracts_notification) {
+                scheduled_email_gr.setValue('active', true);
+            } else {
+                scheduled_email_gr.setValue('active', false);
+            }
 
             // In adition to active state set the address_list field using emails inputted by the user
             scheduled_email_gr.setValue('address_list', notification_contacts);
@@ -219,14 +244,14 @@ Lenovo_App_Utils.prototype = Object.extendsObject(global.AbstractAjaxProcessor, 
         // Using GlideRecord Objects retrieve system parameters
         // set value states of system parameters using variables declared above
         // and update system parameters
-		
-		// Logging Type
+
+        // Logging Type
         if (system_properties_gr.get('7840348a078220103af7f2ae7c1ed0aa')) {
             system_properties_gr.setValue('value', logging_type);
             system_properties_gr.update();
         }
-	
-		// Truncate logs value
+
+        // Truncate logs value
         if (system_properties_gr.get('8c8134ca078220103af7f2ae7c1ed046')) {
             system_properties_gr.setValue('value', truncate_logs_value);
             system_properties_gr.update();
@@ -241,7 +266,7 @@ Lenovo_App_Utils.prototype = Object.extendsObject(global.AbstractAjaxProcessor, 
     // Create new entry in API Key Table
     set_api_key: function() {
 
-		////////////////////////////////////////// Variables ////////////////////////////////////////////
+        ////////////////////////////////////////// Variables ////////////////////////////////////////////
         // Sys parm retrieval
         var api_key = this.getParameter('sysparm_api_key');
 
@@ -256,10 +281,10 @@ Lenovo_App_Utils.prototype = Object.extendsObject(global.AbstractAjaxProcessor, 
 
         // Storage
         var response;
-		
-		////////////////////////////////////////// Data validation ////////////////////////////////////////////
+
+        ////////////////////////////////////////// Data validation ////////////////////////////////////////////
         api_key_gr.query(); // query all data on api_key_table (there should only be one)
-		
+
         if (api_key_gr.next()) { // Retrieved something
             gs.addErrorMessage('API Credentials for Lenovo already exists, please delete it to add a new one.');
         } else if (api_key.length === 0) { // A client id was submited
@@ -279,8 +304,8 @@ Lenovo_App_Utils.prototype = Object.extendsObject(global.AbstractAjaxProcessor, 
             if (httpResponseStatus == 401) { // Error message was recieved
                 gs.addErrorMessage('Your API Key is invalid according to Lenovo. Please double check you have the correct key.');
             } else {
-				
-				////////////////////////////////////////// Setting API Key ////////////////////////////////////////////
+
+                ////////////////////////////////////////// Setting API Key ////////////////////////////////////////////
                 // Add api_credentials
                 api_key_gr.initialize();
                 api_key_gr.api_key = api_key;
@@ -298,14 +323,14 @@ Lenovo_App_Utils.prototype = Object.extendsObject(global.AbstractAjaxProcessor, 
     // Get API Credentials Stored in API Key Table
     get_api_key: function() {
 
-		////////////////////////////////////////// Variables ////////////////////////////////////////////
+        ////////////////////////////////////////// Variables ////////////////////////////////////////////
         // Glide Record
         var api_key_gr = new GlideRecord('x_500374_leno_warr_api_key');
 
         // Var to return
         var api_key_retrieved = false;
 
-		////////////////////////////////////////// Key retrieval ////////////////////////////////////////////
+        ////////////////////////////////////////// Key retrieval ////////////////////////////////////////////
         api_key_gr.setLimit(1);
         api_key_gr.query();
 
@@ -329,13 +354,13 @@ Lenovo_App_Utils.prototype = Object.extendsObject(global.AbstractAjaxProcessor, 
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2021-02-01 21:54:09</sys_created_on>
         <sys_id>49bda086078220103af7f2ae7c1ed001</sys_id>
-        <sys_mod_count>2</sys_mod_count>
+        <sys_mod_count>3</sys_mod_count>
         <sys_name>Lenovo_App_Utils</sys_name>
         <sys_package display_value="Lenovo Warranty Import" source="x_500374_leno_warr">abde5c0e074220103af7f2ae7c1ed08c</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Lenovo Warranty Import">abde5c0e074220103af7f2ae7c1ed08c</sys_scope>
         <sys_update_name>sys_script_include_49bda086078220103af7f2ae7c1ed001</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2021-02-01 22:32:23</sys_updated_on>
+        <sys_updated_on>2021-02-02 01:55:21</sys_updated_on>
     </sys_script_include>
 </record_update>
