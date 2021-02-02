@@ -271,7 +271,7 @@ Lenovo_App_Utils.prototype = Object.extendsObject(global.AbstractAjaxProcessor, 
         var api_key = this.getParameter('sysparm_api_key');
 
         // API Endpoints
-        var bearer_token_endpoint = gs.getProperty('x_500374_leno_warr.warranty_api_endpoint'); // Change this
+        var warranty_api_endpoint = gs.getProperty('x_500374_leno_warr.warranty_api_endpoint'); 
 
         // Glide Records
         var api_key_gr = new GlideRecord('x_500374_leno_warr_api_key');
@@ -293,19 +293,14 @@ Lenovo_App_Utils.prototype = Object.extendsObject(global.AbstractAjaxProcessor, 
 
             var rest_v2 = new sn_ws.RESTMessageV2();
             rest_v2.setHttpMethod('get');
-            rest_v2.setEndpoint(bearer_token_endpoint);
-            rest_v2.setQueryParameter('vendor', 'Lenovo');
-            rest_v2.setQueryParameter('serialnumbers', 'testingAPIKey'); // Setting dummy serial number to test apiKey
-            rest_v2.setRequestHeader('clientid', api_key);
-
+            rest_v2.setEndpoint(warranty_api_endpoint);
+            rest_v2.setQueryParameter('serial', 'testing_api_key'); // Setting dummy serial number to test apiKey
+			rest_v2.setRequestHeader('clientid', api_key);
             response = rest_v2.execute();
             var httpResponseStatus = response.getStatusCode();
 
-            if (httpResponseStatus == 401) { // Error message was recieved
-                gs.addErrorMessage('Your API Key is invalid according to Lenovo. Please double check you have the correct key.');
-            } else {
-
-                ////////////////////////////////////////// Setting API Key ////////////////////////////////////////////
+            if (httpResponseStatus == 200) { 
+				////////////////////////////////////////// Setting API Key ////////////////////////////////////////////
                 // Add api_credentials
                 api_key_gr.initialize();
                 api_key_gr.api_key = api_key;
@@ -314,8 +309,13 @@ Lenovo_App_Utils.prototype = Object.extendsObject(global.AbstractAjaxProcessor, 
                 api_key_added = true;
 
                 gs.addInfoMessage('Your API Key was sucessfully added.');
-            }
+            } else if(httpResponseStatus == 401) {
+                gs.addErrorMessage('Your API Key is invalid according to Lenovo. Please double check you have the correct key.');
+            } else {
+				gs.addErrorMessage('Something went wrong with Lenovo'+"'"+'s Warranty API, please try again later.');
+			}
 
+			gs.info(httpResponseStatus);
             return api_key_added;
         }
     },
@@ -354,13 +354,13 @@ Lenovo_App_Utils.prototype = Object.extendsObject(global.AbstractAjaxProcessor, 
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2021-02-01 21:54:09</sys_created_on>
         <sys_id>49bda086078220103af7f2ae7c1ed001</sys_id>
-        <sys_mod_count>3</sys_mod_count>
+        <sys_mod_count>12</sys_mod_count>
         <sys_name>Lenovo_App_Utils</sys_name>
         <sys_package display_value="Lenovo Warranty Import" source="x_500374_leno_warr">abde5c0e074220103af7f2ae7c1ed08c</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Lenovo Warranty Import">abde5c0e074220103af7f2ae7c1ed08c</sys_scope>
         <sys_update_name>sys_script_include_49bda086078220103af7f2ae7c1ed001</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2021-02-02 01:55:21</sys_updated_on>
+        <sys_updated_on>2021-02-02 02:40:31</sys_updated_on>
     </sys_script_include>
 </record_update>
