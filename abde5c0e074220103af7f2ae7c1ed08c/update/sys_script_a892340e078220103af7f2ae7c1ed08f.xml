@@ -12,13 +12,10 @@
         <change_fields>false</change_fields>
         <client_callable>false</client_callable>
         <collection>alm_hardware</collection>
-        <condition/>
+        <condition>current.model_category.name == 'Computer' &amp;&amp; !current.model.manufacturer.name.nil() &amp;&amp; current.model.manufacturer.name.indexOf('Lenovo') &gt;= 0</condition>
         <description/>
         <execute_function>false</execute_function>
-        <filter_condition table="alm_hardware">serial_numberISNOTEMPTY^modelLIKElenovo^ORmodelLIKELenovo^model_category=81feb9c137101000deeabfc8bcbe5dc4^EQ<item endquery="false" field="serial_number" goto="false" newquery="false" operator="ISNOTEMPTY" or="false" value=""/>
-            <item endquery="false" field="model" goto="false" newquery="false" operator="LIKE" or="false" value="lenovo"/>
-            <item endquery="false" field="model" goto="false" newquery="false" operator="LIKE" or="true" value="Lenovo"/>
-            <item display_table="cmdb_model_category" display_value="Computer" endquery="false" field="model_category" goto="false" newquery="false" operator="=" or="false" value="81feb9c137101000deeabfc8bcbe5dc4"/>
+        <filter_condition table="alm_hardware">serial_numberISNOTEMPTY^EQ<item endquery="false" field="serial_number" goto="false" newquery="false" operator="ISNOTEMPTY" or="false" value=""/>
             <item endquery="true" field="" goto="false" newquery="false" operator="=" or="false" value=""/>
         </filter_condition>
         <is_rest>false</is_rest>
@@ -31,7 +28,7 @@
         <rest_service/>
         <rest_service_text/>
         <rest_variables/>
-        <role_conditions>x_500374_leno_warr.import_admin,x_500374_leno_warr.import_user</role_conditions>
+        <role_conditions/>
         <script><![CDATA[// Get contract for the current asset
 (function executeRule(current, previous /*null when async*/ ) {
 
@@ -49,7 +46,7 @@
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>a892340e078220103af7f2ae7c1ed08f</sys_id>
-        <sys_mod_count>9</sys_mod_count>
+        <sys_mod_count>12</sys_mod_count>
         <sys_name>Get Contract for New Asset</sys_name>
         <sys_overrides/>
         <sys_package display_value="Lenovo Warranty Import" source="x_500374_leno_warr">abde5c0e074220103af7f2ae7c1ed08c</sys_package>
@@ -57,7 +54,7 @@
         <sys_scope display_value="Lenovo Warranty Import">abde5c0e074220103af7f2ae7c1ed08c</sys_scope>
         <sys_update_name>sys_script_a892340e078220103af7f2ae7c1ed08f</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2021-02-04 00:49:04</sys_updated_on>
+        <sys_updated_on>2021-02-04 03:53:16</sys_updated_on>
         <template/>
         <when>async</when>
     </sys_script>
