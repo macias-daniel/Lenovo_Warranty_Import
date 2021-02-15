@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_scope_privilege">
+    <sys_scope_privilege action="DELETE">
+        <operation>write</operation>
+        <source_scope display_value="Lenovo Warranty Import">abde5c0e074220103af7f2ae7c1ed08c</source_scope>
+        <status>allowed</status>
+        <sys_class_name>sys_scope_privilege</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2021-02-08 23:14:55</sys_created_on>
+        <sys_id>d843495007d220103af7f2ae7c1ed0dc</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>sys_script</sys_name>
+        <sys_package display_value="Lenovo Warranty Import" source="x_500374_leno_warr">abde5c0e074220103af7f2ae7c1ed08c</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Lenovo Warranty Import">abde5c0e074220103af7f2ae7c1ed08c</sys_scope>
+        <sys_update_name>sys_scope_privilege_d843495007d220103af7f2ae7c1ed0dc</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2021-02-08 23:14:55</sys_updated_on>
+        <target_name>sys_script</target_name>
+        <target_scope display_value="Global">global</target_scope>
+        <target_type>sys_db_object</target_type>
+    </sys_scope_privilege>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="Lenovo Warranty Import">abde5c0e074220103af7f2ae7c1ed08c</application>
+        <file_path/>
+        <instance_id>c93a1f4ddb1f9f004f035d00cf9619fb</instance_id>
+        <instance_name>dev64536</instance_name>
+        <name>sys_scope_privilege_d843495007d220103af7f2ae7c1ed0dc</name>
+        <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_scope_privilege"><sys_scope_privilege action="INSERT_OR_UPDATE"><operation>write</operation><source_scope display_value="Lenovo Warranty Import">abde5c0e074220103af7f2ae7c1ed08c</source_scope><status>allowed</status><sys_class_name>sys_scope_privilege</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2021-02-08 23:14:55</sys_created_on><sys_id>d843495007d220103af7f2ae7c1ed0dc</sys_id><sys_mod_count>0</sys_mod_count><sys_name>sys_script</sys_name><sys_package display_value="Lenovo Warranty Import" source="x_500374_leno_warr">abde5c0e074220103af7f2ae7c1ed08c</sys_package><sys_policy/><sys_scope display_value="Lenovo Warranty Import">abde5c0e074220103af7f2ae7c1ed08c</sys_scope><sys_update_name>sys_scope_privilege_d843495007d220103af7f2ae7c1ed0dc</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2021-02-08 23:14:55</sys_updated_on><target_name>sys_script</target_name><target_scope display_value="Global">global</target_scope><target_type>sys_db_object</target_type></sys_scope_privilege></record_update>]]></payload>
+        <payload_hash>-1413840664</payload_hash>
+        <record_name>sys_script</record_name>
+        <reverted_from/>
+        <source>23de5c0e074220103af7f2ae7c1ed08f</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2021-02-08 23:14:55</sys_created_on>
+        <sys_id>6c63c95007d220103af7f2ae7c1ed049</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>17783ed2f740000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2021-02-08 23:14:55</sys_updated_on>
+        <type>Cross scope privilege</type>
+        <update_guid>a463c95063d2201010c5db7aff6a0449</update_guid>
+        <update_guid_history>a463c95063d2201010c5db7aff6a0449:-1413840664</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete/>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2021-02-15 03:37:18</sys_created_on>
+        <sys_db_object display_value="" name="sys_scope_privilege">sys_scope_privilege</sys_db_object>
+        <sys_id>578e6c8a3f154a46a57a9f2edac70789</sys_id>
+        <sys_metadata>d843495007d220103af7f2ae7c1ed0dc</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>sys_script</sys_name>
+        <sys_package display_value="Lenovo Warranty Import" source="x_500374_leno_warr">abde5c0e074220103af7f2ae7c1ed08c</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="Lenovo Warranty Import">abde5c0e074220103af7f2ae7c1ed08c</sys_scope>
+        <sys_scope_delete display_value="">3d65fe1f297544feb86fc7d48a7f0319</sys_scope_delete>
+        <sys_update_name>sys_scope_privilege_d843495007d220103af7f2ae7c1ed0dc</sys_update_name>
+        <sys_update_version display_value="sys_scope_privilege_d843495007d220103af7f2ae7c1ed0dc">6c63c95007d220103af7f2ae7c1ed049</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2021-02-15 03:37:18</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>
