@@ -106,14 +106,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2021-02-01 21:33:54</sys_created_on>
         <sys_id>6c296c06078220103af7f2ae7c1ed0e3</sys_id>
-        <sys_mod_count>2</sys_mod_count>
+        <sys_mod_count>3</sys_mod_count>
         <sys_name>All Expiring Contracts (90 Days)</sys_name>
         <sys_package display_value="Lenovo Warranty Import" source="x_500374_leno_warr">abde5c0e074220103af7f2ae7c1ed08c</sys_package>
         <sys_policy/>
         <sys_scope display_value="Lenovo Warranty Import">abde5c0e074220103af7f2ae7c1ed08c</sys_scope>
         <sys_update_name>sys_report_6c296c06078220103af7f2ae7c1ed0e3</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2021-02-01 22:03:53</sys_updated_on>
+        <sys_updated_on>2021-02-15 02:01:35</sys_updated_on>
         <table>ast_contract</table>
         <title>All Expiring Contracts (90 Days)</title>
         <title_horizontal_alignment>center</title_horizontal_alignment>
@@ -124,7 +124,7 @@
         <upper_limit/>
         <use_color_heatmap>false</use_color_heatmap>
         <use_null_in_trend>false</use_null_in_trend>
-        <user>6816f79cc0a8016401c5a33be04be441</user>
+        <user>GLOBAL</user>
         <x_axis_allow_decimals>true</x_axis_allow_decimals>
         <x_axis_display_grid>false</x_axis_display_grid>
         <x_axis_grid_color display_value="LightGrey">65b30308a9fe3dba01ebaa03e87e7cd3</x_axis_grid_color>
